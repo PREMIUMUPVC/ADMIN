@@ -1,0 +1,11 @@
+# This is the Netlify configuration file.
+# It tells Netlify how to build your project.
+
+[build]
+  # This is the command that will run when you deploy.
+  # It finds all HTML files and injects your environment variables.
+  command = "find . -type f -name \"*.html\" -exec sed -i 's|__API_KEY__|'${API_KEY}'|g; s|__AUTH_DOMAIN__|'${AUTH_DOMAIN}'|g; s|__PROJECT_ID__|'${PROJECT_ID}'|g; s|__STORAGE_BUCKET__|'${STORAGE_BUCKET}'|g; s|__MESSAGING_SENDER_ID__|'${MESSAGING_SENDER_ID}'|g; s|__APP_ID__|'${APP_ID}'|g; s|__MEASUREMENT_ID__|'${MEASUREMENT_ID}'|g; s|__ADMIN_EMAIL__|'${ADMIN_EMAIL}'|g' {} + && echo 'Build settings from netlify.toml applied successfully!'"
+
+  # This tells Netlify where your final site files are located.
+  # If your HTML files are in the root, use "."
+  publish = "."

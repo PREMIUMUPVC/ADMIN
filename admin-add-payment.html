@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayrollPro - Add Payment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- 1. DESIGN SYSTEM --- */
+        :root {
+            --font-main: 'Inter', sans-serif;
+            --ease-cubic: cubic-bezier(0.4, 0, 0.2, 1);
+            --radius-sm: 4px; --radius-md: 8px; --radius-lg: 16px;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-focus-ring: 0 0 0 3px;
+        }
+
+        /* [THEME] Light Mode Palette */
+        [data-theme="light"] {
+            --color-primary: #4f46e5; --color-primary-light: #e0e7ff; --color-primary-dark: #3730a3;
+            --color-secondary: #475569; --color-background: #f8fafc;
+            --color-surface: #ffffff; --color-text-primary: #1f2937;
+            --color-text-secondary: #64748b; --color-border: #e5e7eb;
+        }
+
+        /* [THEME] Dark Mode Palette */
+        [data-theme="dark"] {
+            --color-primary: #818cf8; --color-primary-light: rgba(129, 140, 248, 0.16); --color-primary-dark: #a7affb;
+            --color-secondary: #94a3b8; --color-background: #0f172a;
+            --color-surface: #1e293b; --color-text-primary: #f1f5f9;
+            --color-text-secondary: #94a3b8; --color-border: #334155;
+        }
+
+        /* --- 2. GLOBAL RESETS & BASE STYLES --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-main); background-color: var(--color-background);
+            color: var(--color-text-primary); line-height: 1.5;
+            transition: background-color 0.3s var(--ease-cubic), color 0.3s var(--ease-cubic);
+            -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+        h2 { font-size: 1.25rem; color: var(--color-text-primary); margin-bottom: 1.5rem; }
+        .view.active { display: block; animation: fadeIn 0.5s var(--ease-cubic); }
+        .icon-sm { width: 16px; height: 16px; } .icon-lg { width: 24px; height: 24px; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
+
+        /* --- 3. LAYOUT & SHELL --- */
+        .app-container { display: block; }
+        main { padding-top: 48px; padding-bottom: 48px; }
+        .app-header {
+            height: 65px;
+            background-color: hsla(0, 0%, 100%, 0.8); border-bottom: 1px solid var(--color-border);
+            padding: 0 16px; display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 100; backdrop-filter: blur(8px);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        [data-theme="dark"] .app-header { background-color: hsla(222, 47%, 11%, 0.8); }
+
+        /* NAVBAR STYLES */
+        .nav-left, .nav-right { display: flex; align-items: center; gap: 16px; }
+        .nav-menu-btn { display: none; }
+        .profile-menu { position: relative; }
+        #profile-dropdown {
+            display: none; position: absolute; top: calc(100% + 12px); right: 0;
+            background-color: var(--color-surface); border: 1px solid var(--color-border);
+            border-radius: var(--radius-md); box-shadow: var(--shadow-lg);
+            width: 180px; padding: 8px;
+        }
+        #profile-dropdown.active { display: block; }
+        #profile-dropdown .btn { width: 100%; justify-content: flex-start; }
+        #mobile-menu { position: fixed; top: 0; left: 0; bottom: 0; width: 280px; background-color: var(--color-surface); transform: translateX(-100%); transition: transform 0.3s var(--ease-cubic); z-index: 1020; padding: 24px; box-shadow: var(--shadow-lg); }
+        #mobile-menu.active { transform: translateX(0); }
+        .mobile-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .mobile-menu-title { font-size: 1.2rem; font-weight: 600; }
+        #mobile-menu-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(15, 23, 42, 0.6); z-index: 1010; }
+        #mobile-menu-overlay.active { display: block; }
+        #mobile-menu-content { display: flex; flex-direction: column; gap: 12px; }
+        #mobile-menu-content .btn { width: 100%; justify-content: flex-start; }
+        
+        /* --- 4. COMPONENT LIBRARY --- */
+        .btn { padding: 10px 18px; border: 1px solid transparent; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.2s var(--ease-cubic); display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+        .btn-primary { background-color: var(--color-primary); color: white; box-shadow: var(--shadow-md); }
+        .btn-secondary { background-color: var(--color-surface); border-color: var(--color-border); color: var(--color-text-primary); box-shadow: var(--shadow-sm); }
+        .btn-icon { background: none; border: none; padding: 10px; border-radius: 50%; cursor: pointer; color: var(--color-text-secondary); transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .btn-icon:hover { color: var(--color-text-primary); background-color: var(--color-border); }
+        .card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-sm); }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--color-text-secondary); font-size: 0.9rem; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background-color: var(--color-background); transition: all 0.2s; color: var(--color-text-primary); }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--color-primary); box-shadow: var(--shadow-focus-ring) var(--color-primary-light); }
+
+        /* --- 5. VIEW-SPECIFIC STYLES --- */
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--color-border); cursor: pointer; }
+        #add-payment-view-header { flex-direction: row; align-items: center; justify-content: flex-start; }
+        #add-payment-view-header .btn { padding: 6px 12px; font-size: 0.85rem; }
+
+        /* --- 6. UTILITIES & FEEDBACK --- */
+        #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(4px); }
+        .spinner { width: 48px; height: 48px; border: 5px solid var(--color-primary-light); border-bottom-color: var(--color-primary); border-radius: 50%; animation: rotation 1s linear infinite; }
+        #toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); padding: 15px 25px; border-radius: var(--radius-md); color: white; font-weight: 500; box-shadow: var(--shadow-lg); transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); z-index: 1001; }
+        #toast.show { bottom: 30px; }
+        #toast.success { background-color: var(--color-primary); }
+        #toast.error { background-color: var(--color-danger); }
+
+        /* --- 7. ANIMATIONS & RESPONSIVE --- */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        @media (max-width: 768px) {
+            .container { padding: 0 16px; }
+            .desktop-only { display: none !important; }
+            .nav-menu-btn { display: inline-flex; }
+            main { padding-top: 24px; padding-bottom: 24px; }
+            .app-header { padding: 0 16px; }
+            .card { padding: 16px; }
+        }
+        @media (min-width: 769px) {
+            .mobile-only { display: none !important; }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app-container" class="app-container">
+        <header id="app-header" class="app-header"></header>
+        
+        <div id="mobile-menu-overlay" data-app-action="close-menu"></div>
+        <div id="mobile-menu">
+            <div class="mobile-menu-header">
+                <span class="mobile-menu-title">Menu</span>
+                <button class="btn-icon" data-app-action="close-menu">
+                    <svg class="icon-lg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <div id="mobile-menu-content"></div>
+        </div>
+
+        <main>
+            <div class="container" id="main-container">
+                <!-- This is the main view for this page -->
+                <div id="add-payment-view" class="view active">
+                    <!-- Content injected by JS -->
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <div id="toast"></div>
+    <div id="loader"><div class="spinner"></div></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, addDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // IMPORTANT: Replace with your actual Firebase configuration
+        // Firebase configuration will be injected by Netlify during build
+const firebaseConfig = {
+    apiKey: "__API_KEY__",
+    authDomain: "__AUTH_DOMAIN__",
+    projectId: "__PROJECT_ID__",
+    storageBucket: "__STORAGE_BUCKET__",
+    messagingSenderId: "__MESSAGING_SENDER_ID__",
+    appId: "__APP_ID__",
+    measurementId: "__MEASUREMENT_ID__"
+};
+        
+        let db, auth;
+        let currentUserProfile = null;
+        const ADMIN_EMAIL = "__ADMIN_EMAIL__";
+
+        // --- HELPER FUNCTIONS ---
+        const showLoader = () => document.getElementById('loader').style.display = 'flex';
+        const hideLoader = () => document.getElementById('loader').style.display = 'none';
+        const showToast = (message, type = 'success') => { const t = document.getElementById('toast'); t.textContent = message; t.className = `show ${type}`; setTimeout(() => { t.className = t.className.replace('show', ''); }, 3000); }
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                if (!firebaseConfig.apiKey || firebaseConfig.projectId === "your-project-id") {
+                    throw new Error("Firebase config is not set.");
+                }
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                bindEventListeners();
+                initializeTheme();
+                listenForAuthStateChanges();
+            } catch (error) {
+                console.error("Initialization Failed:", error);
+                document.body.innerHTML = `<div class="full-page-center"><h2>Error initializing application.</h2></div>`;
+            }
+        });
+
+        // --- AUTHENTICATION & ROUTING ---
+        function listenForAuthStateChanges() {
+            onAuthStateChanged(auth, async (user) => {
+                showLoader();
+                if (user) {
+                    if (user.email !== ADMIN_EMAIL) {
+                        window.location.href = 'employee-dashboard.html';
+                        return;
+                    }
+                    
+                    const userRef = doc(db, "users", user.uid);
+                    const userDoc = await getDoc(userRef);
+                    currentUserProfile = { id: userDoc.id, ...userDoc.data() };
+                    
+                    renderHeader();
+                    await showAddPaymentView(); // Main function for this page
+                    
+                } else {
+                    window.location.href = 'login.html';
+                }
+                hideLoader();
+            });
+        }
+
+        async function handleLogout() { 
+            await signOut(auth);
+        }
+        
+        // --- CORE PAGE LOGIC ---
+        async function showAddPaymentView() {
+            const view = document.getElementById('add-payment-view');
+            try {
+                const employeesSnap = await getDocs(collection(db, "employees"));
+                const employees = employeesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                const employeeOptions = employees.map(emp => `<option value="${emp.id}">${emp.name}</option>`).join('');
+                
+                view.innerHTML = `
+                    <div id="add-payment-view-header" style="margin-bottom: 16px;">
+                        <button data-app-action="navigate-home" class="btn btn-secondary">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon-sm" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                            Back to Dashboard
+                        </button>
+                    </div>
+                    <div class="card">
+                        <h2>Add a Global Payment</h2>
+                        <form id="global-payment-form">
+                            <div class="form-group">
+                                <label for="g-payment-employee">Select Employee</label>
+                                <select id="g-payment-employee" required>
+                                    <option value="">-- Please Select --</option>
+                                    ${employeeOptions}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="g-payment-amount">Amount</label>
+                                <input type="number" id="g-payment-amount" required min="0" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label for="g-payment-date">Date</label>
+                                <input type="date" id="g-payment-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="g-payment-note">Note (Optional)</label>
+                                <input type="text" id="g-payment-note">
+                            </div>
+                            <div class="form-group">
+                                <label for="g-payment-mode">Mode</label>
+                                <select id="g-payment-mode">
+                                    <option>Cash</option>
+                                    <option>Online</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width:100%">Save Payment</button>
+                        </form>
+                    </div>`;
+                document.getElementById('global-payment-form').addEventListener('submit', handleGlobalPaymentFormSubmit);
+            } catch(err) {
+                console.error("Error loading add payment view:", err);
+                showToast("Could not load page.", "error");
+                view.innerHTML = `<p>Error loading form. Please try again.</p>`;
+            }
+        }
+
+        async function handleGlobalPaymentFormSubmit(e) {
+            e.preventDefault();
+            showLoader();
+            const employeeId = document.getElementById('g-payment-employee').value;
+            const data = {
+                amount: parseFloat(document.getElementById('g-payment-amount').value),
+                date: document.getElementById('g-payment-date').value,
+                note: document.getElementById('g-payment-note').value,
+                paymentMode: document.getElementById('g-payment-mode').value
+            };
+            try {
+                if (!employeeId || !data.amount || !data.date) {
+                    throw new Error("Employee, Amount and Date are required.");
+                }
+                await addDoc(collection(db, `employees/${employeeId}/payments`), data);
+                showToast("Payment added successfully!", "success");
+                
+                // Redirect back to the dashboard after a short delay
+                setTimeout(() => {
+                    window.location.href = 'admin-dashboard.html';
+                }, 1500);
+
+            } catch(err) {
+                console.error("Error adding global payment:", err);
+                showToast(`Error: ${err.message}`, "error");
+                hideLoader();
+            }
+        }
+
+        // --- UI RENDERING (HEADER, THEME, MENUS) ---
+        function renderHeader() {
+            const header = document.getElementById('app-header');
+            header.innerHTML = `
+                <div class="nav-left">
+                     <button class="btn-icon nav-menu-btn" data-app-action="toggle-menu">
+                        <svg class="icon-lg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
+                    </button>
+                    <span class="header-title mobile-only">PayrollPro</span>
+                </div>
+                <div class="nav-right">
+                    <div class="profile-menu">
+                        <img src="${currentUserProfile.photoURL}" alt="User Profile" class="user-avatar" data-app-action="toggle-profile-dropdown">
+                        <div id="profile-dropdown">
+                            <button class="btn btn-secondary" data-app-action="logout">Logout</button>
+                        </div>
+                    </div>
+                </div>`;
+            document.getElementById('mobile-menu-content').innerHTML = `<button class="btn btn-secondary" data-app-action="toggle-theme">Toggle Theme</button>`;
+        }
+        function toggleMenu(show) { document.getElementById('mobile-menu').classList.toggle('active', show); document.getElementById('mobile-menu-overlay').classList.toggle('active', show); }
+        function toggleProfileDropdown(show) { const dropdown = document.getElementById('profile-dropdown'); if (show === undefined) { dropdown.classList.toggle('active'); } else { dropdown.classList.toggle('active', show); } }
+        function initializeTheme() { const theme = localStorage.getItem('theme') || 'light'; document.documentElement.setAttribute('data-theme', theme); }
+        function toggleTheme() { const currentTheme = document.documentElement.getAttribute('data-theme'); const newTheme = currentTheme === 'light' ? 'dark' : 'light'; document.documentElement.setAttribute('data-theme', newTheme); localStorage.setItem('theme', newTheme); }
+        
+        // --- EVENT HANDLING ---
+        function bindEventListeners() {
+            document.body.addEventListener('click', async (e) => {
+                const target = e.target;
+                const appAction = target.closest('[data-app-action]');
+
+                if (!appAction?.dataset?.appAction) {
+                    if (!target.closest('.profile-menu')) toggleProfileDropdown(false);
+                    return;
+                }
+                
+                e.preventDefault();
+                const action = appAction.dataset.appAction;
+                
+                switch (action) {
+                    case 'navigate-home':
+                        window.location.href = 'admin-dashboard.html';
+                        break;
+                    case 'toggle-menu': toggleMenu(true); break;
+                    case 'close-menu': toggleMenu(false); break;
+                    case 'toggle-profile-dropdown': toggleProfileDropdown(); break;
+                    case 'toggle-theme': toggleTheme(); break;
+                    case 'logout': await handleLogout(); break;
+                }
+            });
+        }
+    </script>
+</body>
+</html>

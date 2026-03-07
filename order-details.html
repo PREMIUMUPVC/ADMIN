@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayrollPro - Order Details</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <style>
+        /* --- UNIFIED CORE STYLES & VARIABLES --- */
+        :root {
+            /* Fonts */
+            --font-main: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+            --font-alt: 'Inter', sans-serif;
+            --font-icon: "Material Symbols Outlined";
+            
+            /* Colors (Order Details Theme) */
+            --color-primary: #047857; --color-primary-hover: #059669; --color-primary-text: #ffffff;
+            --color-danger: #dc2626; --color-danger-hover: #b91c1c; --color-danger-text: #ffffff;
+            --color-reopen: #6d28d9; --color-reopen-hover: #5b21b6; --color-reopen-text: #ffffff;
+            --color-focus-ring: rgba(4, 120, 87, 0.3);
+            
+            /* Layout & Backgrounds */
+            --light-bg-primary: #ffffff; --light-bg-secondary: #f8f9fa; --light-bg-tertiary: #f1f5f9;
+            --light-text-primary: #111827; --light-text-secondary: #4b5563; --light-text-muted: #6b7280;
+            --light-border: #e5e7eb; --light-border-hover: #d1d5db;
+            
+            /* Status Tags */
+            --status-pending-bg: #eef2ff; --status-pending-text: #4338ca;
+            --status-completed-bg: #dcfce7; --status-completed-text: #166534;
+            --status-overdue-bg: #fee2e2; --status-overdue-text: #b91c1c;
+            --status-upcoming-bg: #fefce8; --status-upcoming-text: #a16207;
+
+            /* Sizing & Effects */
+            --radius-sm: 0.25rem; --radius-md: 0.5rem; --radius-lg: 0.75rem;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08);
+            --ease: cubic-bezier(.4, 0, .2, 1);
+            --sticky-footer-height: 92px;
+            --navbar-height: 72px;
+        }
+
+        /* --- GLOBAL RESETS & BASE STYLES --- */
+        *, :after, :before { box-sizing: border-box; }
+        html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        body { 
+            font-family: var(--font-main); 
+            background-color: var(--light-bg-secondary); 
+            color: var(--light-text-secondary); 
+            margin: 0; 
+            padding-bottom: var(--sticky-footer-height); 
+            font-size: 16px; 
+            padding-top: var(--navbar-height); /* Reserved space for fixed navbar */
+        }
+        h1, h2, h3 { font-weight: 600; color: var(--light-text-primary); margin: 0; }
+        h1 { font-size: 1.25rem; font-weight: 700; } h3 { font-size: 1.125rem; }
+        p { margin: 0 0 1rem; line-height: 1.6; }
+
+        /* --- NAVBAR STYLES --- */
+        .header {position: fixed; top: 0; width: 100%; z-index: 50; background-color: hsla(0, 0%, 100%, 0.8); backdrop-filter: blur(8px);}
+        .header-container { width: 90%; margin-left: auto; margin-right: auto; }
+        @media (min-width: 48rem) { .header-container { width: 80%; } }
+        @media (max-width: 768px) {.header-container { padding-left: 16px; padding-right: 16px; width: 100%; } .nav-left, .nav-right, .logo, .menu-button { margin: 0; padding: 0; }}
+        .nav { padding-top: 0.75rem; padding-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; }
+        .nav-left { display: flex; align-items: center; gap: 1.5rem; }
+        .logo { margin-right: 1.5rem; width: 100px; height: 40px; color: transparent; object-fit: contain; }
+        .nav-links { display: none; align-items: center; gap: 1rem; }
+        @media (min-width: 48rem) { .nav-links { display: flex; } }
+        .nav-link { padding: 0.5rem 1rem; font-size: 1rem; font-weight: 500; color: #012726; transition: color 0.15s, background-color 0.15s; text-decoration: none; border-radius: 0.375rem; }
+        @media (hover: hover) { .nav-link:hover { color: #fff; background-color: #012726; } }
+        .nav-right { display: flex; align-items: center; gap: 1rem; }
+        .menu-button { display: flex; padding: 0.375rem; border: 1px solid #012726; border-radius: 0.375rem; color: #012726; background-color: transparent; cursor: pointer; }
+        @media (min-width: 48rem) { .menu-button { display: none; } }
+        #mobileMenu { position: fixed; top: 0; right: 0; bottom: 0; width: 75vw; max-width: 320px; background: #ffffff; padding: 24px 16px; transform: translateX(100%); transition: transform 0.3s ease; box-shadow: -2px 0 8px rgba(0,0,0,0.1); z-index: 1000; border-top-left-radius: 16px; display: flex; flex-direction: column; }
+        #mobileMenu.active { transform: translateX(0); }
+        #menuOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; display: none; }
+        #menuOverlay.active { display: block; }
+        .mobile-menu-close { padding: 8px; border-radius: 8px; border: none; background: transparent; transition: background 0.2s ease, transform 0.2s ease; align-self: flex-end; margin-bottom: 24px; cursor: pointer; }
+        .mobile-menu-close svg { width: 24px; height: 24px; color: #4b5563; }
+        .mobile-menu-content { flex-grow: 1; overflow-y: auto; }
+        .mobile-menu-section { display: flex; flex-direction: column; gap: 8px; }
+        .mobile-nav-link { display: flex; align-items: center; padding: 12px 16px; border-radius: 0.5rem; text-decoration: none; font-weight: 500; color: #012726; background-color: #f8f9fa; transition: background-color 0.15s; }
+        .mobile-nav-link:hover { background-color: #e9ecef; }
+        .mobile-nav-icon { width: 20px; height: 20px; margin-right: 12px; color: #495057; }
+        .mobile-menu-bottom { flex-shrink: 0; margin-top: auto; padding-top: 16px; border-top: 1px solid #e9ecef; display: flex; flex-direction: column; gap: 16px; }
+        .divider { height: 1px; background-color: var(--light-border); }
+        @media (max-width: 768px) { .divider { width: 100%; margin: 0; padding: 0; } }
+        .desktop-profile { display: none; }
+        @media (min-width: 48rem) { .desktop-profile { display: flex; } }
+        .profile-container { display: flex; align-items: center; gap: 12px; text-decoration: none; cursor: pointer; border-radius: 0.375rem; padding: 4px; }
+        .profile-pic { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #e9ecef; }
+        .profile-info { display: flex; flex-direction: column; line-height: 1.3; }
+        .profile-name { font-weight: 500; color: #012726; font-family: var(--font-alt); }
+        .profile-email { font-size: 0.85rem; color: #6c757d; font-family: var(--font-alt); }
+        .profile-dropdown-container { position: relative; }
+        .logout-popup { display: none; position: absolute; top: calc(100% + 8px); right: 0; background: #fff; border-radius: 0.375rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 8px; z-index: 60; width: 150px; }
+        .logout-popup.show { display: block; }
+        .logout-button { background-color: #dc3545; color: #fff; border: none; padding: 10px 16px; border-radius: 0.375rem; font-weight: 500; cursor: pointer; width: 100%; text-align: center; transition: background-color 0.15s; }
+        .logout-button:hover { background-color: #c82333; }
+
+        /* --- SKELETON LOADER V3 (CORRECTED) --- */
+        .skeleton {
+            position: relative;
+            overflow: hidden;
+            background-color: #e2e8f0;
+            border-radius: var(--radius-md);
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .skeleton::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 150%;
+            height: 100%;
+            background-image: linear-gradient(90deg, transparent 0, rgba(255,255,255,0.4) 50%, transparent 100%);
+            transform: skewX(-20deg);
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes pulse {
+            50% { background-color: #f1f5f9; }
+        }
+        @keyframes shimmer { 
+            100% { left: 150%; } 
+        }
+        .skeleton-line { height: 1rem; margin-bottom: 0.5rem; }
+        .skeleton-line:last-child { margin-bottom: 0; }
+        .skeleton-circle { border-radius: 50%; }
+        .skeleton-tag { width: 100px; height: 24px; border-radius: 999px; }
+        .skeleton-card {
+            padding: 1.5rem;
+            background-color: var(--light-bg-primary);
+            border: 1px solid var(--light-border);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .skeleton-info-grid .skeleton-line { height: 0.8rem; }
+        .skeleton-info-grid .skeleton-line:nth-child(2n) { width: 70%; }
+        .skeleton-tabs { margin-top: 1rem; } /* Mimics .tabs */
+        .skeleton-tabs__nav { /* Mimics .tabs__nav */
+            display: flex;
+            background-color: var(--light-bg-secondary);
+            border-bottom: 1px solid var(--light-border);
+            overflow-x: auto;
+            padding: 0 0.5rem;
+        }
+        /* --- END SKELETON LOADER V3 --- */
+        
+        /* --- ANIMATIONS --- */
+        @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(10px) } to { opacity: 1; transform: translateY(0) } }
+        @keyframes popIn { 0% { opacity: 0; transform: scale(.95) } 100% { opacity: 1; transform: scale(1) } }
+        @keyframes spin { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }
+        .screen.active { display: block; animation: fadeUp 0.4s var(--ease) forwards; }
+
+        /* --- REDESIGNED CORE COMPONENTS (UNCHANGED) --- */
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.25rem; border-radius: var(--radius-md); font-weight: 600; font-size: 0.9375rem; transition: all 0.2s var(--ease); border: 1px solid transparent; cursor: pointer; user-select: none; text-decoration: none; }
+        .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .btn:active:not(:disabled) { transform: translateY(0); box-shadow: var(--shadow-sm); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn:focus-visible { outline: 3px solid var(--color-focus-ring); outline-offset: 2px; }
+        .btn .material-symbols-outlined { font-size: 1.25rem; }
+        .btn-primary { background-color: var(--color-primary); color: var(--color-primary-text); }
+        .btn-primary:hover:not(:disabled) { background-color: var(--color-primary-hover); }
+        .btn-secondary { background-color: var(--light-bg-primary); color: var(--light-text-secondary); border-color: var(--light-border); box-shadow: var(--shadow-sm); }
+        .btn-secondary:hover:not(:disabled) { border-color: var(--light-border-hover); color: var(--light-text-primary); background-color: var(--light-bg-tertiary); }
+        .btn-danger { background-color: var(--color-danger); color: var(--color-danger-text); }
+        .btn-danger:hover:not(:disabled) { background-color: var(--color-danger-hover); }
+        .btn-success { background-color: var(--color-primary); color: var(--color-primary-text); }
+        .btn-success:hover:not(:disabled) { background-color: var(--color-primary-hover); }
+        .btn-reopen { background-color: var(--color-reopen); color: var(--color-reopen-text); }
+        .btn-reopen:hover:not(:disabled) { background-color: var(--color-reopen-hover); }
+        .icon-btn { display: flex; align-items: center; justify-content: center; background: none; border: none; padding: 0.5rem; border-radius: 50%; cursor: pointer; color: var(--light-text-secondary); transition: all 0.2s ease; flex-shrink: 0; }
+        .icon-btn:hover { background-color: var(--light-bg-tertiary); color: var(--light-text-primary); }
+        .icon-btn .material-symbols-outlined { font-size: 1.5rem; }
+        .status-tag { display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
+        .status-tag::before { content: ""; display: block; width: 0.5rem; height: 0.5rem; border-radius: 50%; }
+        .status-tag.pending { background-color: var(--status-pending-bg); color: var(--status-pending-text); } .status-tag.pending::before { background-color: var(--status-pending-text); }
+        .status-tag.completed { background-color: var(--status-completed-bg); color: var(--status-completed-text); } .status-tag.completed::before { background-color: var(--status-completed-text); }
+        .status-tag.overdue { background-color: var(--status-overdue-bg); color: var(--status-overdue-text); } .status-tag.overdue::before { background-color: var(--status-overdue-text); }
+        .status-tag.upcoming-due { background-color: var(--status-upcoming-bg); color: var(--status-upcoming-text); } .status-tag.upcoming-due::before { background-color: var(--status-upcoming-text); }
+
+        /* --- REDESIGNED LAYOUT STRUCTURE (UNCHANGED) --- */
+        .page-container { max-width: 1200px; margin: 0 auto; padding: 0; }
+        .page-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; padding: 1rem; }
+        .details-header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.75rem 1rem; background-color: var(--light-bg-primary); border-bottom: 1px solid var(--light-border); }
+        .details-header__title { display: flex; align-items: center; gap: 0.75rem; flex-grow: 1; min-width: 0; }
+        .details-header__title h1 { line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .actions-menu-container { position: relative; }
+        .actions-dropdown { text-align: left; position: absolute; top: calc(100% + 8px); right: 0; background: var(--light-bg-primary); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); padding: 0.5rem; min-width: 220px; z-index: 1001; visibility: hidden; opacity: 0; transform: translateY(-10px); transition: all 0.2s ease-out; border: 1px solid var(--light-border); }
+        .actions-dropdown.show { visibility: visible; opacity: 1; transform: translateY(0); }
+        .actions-dropdown button { display: flex; align-items: center; gap: 0.75rem; width: 100%; padding: 0.625rem 0.75rem; border: none; background: transparent; text-align: left; font-size: 0.875rem; font-weight: 500; color: var(--light-text-primary); border-radius: var(--radius-sm); cursor: pointer; transition: background-color 0.2s ease; }
+        .actions-dropdown button:hover { background-color: var(--light-bg-tertiary); }
+        .actions-dropdown button .icon { font-size: 1.125rem; color: var(--light-text-secondary); }
+        .actions-dropdown hr { border: none; border-top: 1px solid var(--light-border); margin: 0.5rem 0; }
+        .key-metrics-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background-color: var(--light-border); border: 1px solid var(--light-border); border-radius: var(--radius-lg); overflow: hidden; }
+        .metric-item { background-color: var(--light-bg-primary); padding: 1rem; text-align: center; }
+        .metric-item__label { font-size: 0.70rem; font-weight: 500; color: var(--light-text-secondary); margin-bottom: 0.375rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .metric-item__value { font-size: 1rem; font-weight: 600; color: var(--light-text-primary); line-height: 1.2; }
+        .metric-item__value.pending { color: var(--color-danger); }
+        .tabs { margin-top: 1rem; }
+        .tabs__nav { display: flex; background-color: var(--light-bg-secondary); border-bottom: 1px solid var(--light-border); overflow-x: auto; padding: 0 0.5rem; }
+        .tabs__button { background: none; border: none; padding: 1rem; font-weight: 600; font-size: 0.875rem; color: var(--light-text-secondary); cursor: pointer; transition: color 0.2s ease; white-space: nowrap; flex-shrink: 0; border-bottom: 3px solid transparent; }
+        .tabs__button.active { color: var(--color-primary);  border-color: var(--color-primary); border-top-left-radius: var(--radius-md); border-top-right-radius: var(--radius-md); }
+        .tabs__content-pane { display: none; padding: 1.5rem; background-color: var(--light-bg-primary); border-radius: var(--radius-lg); margin-top: -1px; }
+        .tabs__content-pane.active { display: block; animation: fadeIn 0.3s ease; }
+        .tabs__nav + .tabs__content-pane.active { border-top-left-radius: 0; }
+        .content-section { margin-bottom: 2.5rem; } .content-section:last-child { margin-bottom: 0; }
+        .content-section h3 { font-size: 1.125rem; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--light-border); }
+        .info-grid { display: grid; grid-template-columns: 1fr; gap: 0; font-size: 0.9375rem; }
+        .info-grid-item { display: flex; flex-direction: column; padding: 0.875rem 0; border-bottom: 1px solid var(--light-border); }
+        .info-grid-item:last-child { border-bottom: none; }
+        .info-grid dt { font-weight: 500; color: var(--light-text-muted); font-size: 0.8rem; margin-bottom: 0.125rem; }
+        .info-grid dd { color: var(--light-text-primary); margin: 0; text-align: left; font-weight: 500; }
+        .action-links { margin-top: 1.5rem; background-color: var(--light-bg-tertiary); border: 1px solid var(--light-border); border-radius: var(--radius-md); }
+        .action-link-item { display: flex; align-items: center; padding: 1rem; text-decoration: none; color: var(--light-text-primary); font-weight: 500; border-bottom: 1px solid var(--light-border); transition: background-color 0.2s ease; }
+        .action-link-item:last-child { border-bottom: none; }
+        .action-link-item:hover { background-color: #e9ecef; }
+        .action-link-item .icon { color: var(--light-text-secondary); margin-right: 1rem; }
+        .action-link-item .label { flex-grow: 1; }
+        .action-link-item .chevron { color: var(--light-text-muted); }
+        .detail-window-item { display: flex; align-items: center; gap: 1rem; padding: 0.875rem; background-color: var(--light-bg-tertiary); border-radius: var(--radius-md); margin-bottom: 0.5rem; border: 1px solid var(--light-border); }
+        .item-number { flex-shrink: 0; width: 2.25rem; height: 2.25rem; background-color: var(--color-primary); color: var(--color-primary-text); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.875rem; }
+        .item-info { font-size: 0.9rem; color: var(--light-text-primary); line-height: 1.4; }
+        .item-info small { display: block; color: var(--light-text-secondary); font-size: 0.8rem; margin-top: 0.25rem; }
+        .financial-log, .history-list { list-style: none; padding: 0; margin: 0; }
+        .log-item, .history-item { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 1rem; padding: 1.25rem 0; border-bottom: 1px solid var(--light-border); }
+        .log-item:last-child, .history-item:last-child { border-bottom: none; }
+        .log-item__info, .history-item-info { display: flex; flex-direction: column; }
+        .log-item__amount { font-weight: 600; font-size: 1rem; color: var(--light-text-primary); }
+        .log-item__meta { font-size: 0.8125rem; color: var(--light-text-muted); }
+        .log-item__meta .notes { display: block; margin-top: 4px; color: var(--light-text-secondary); font-style: italic; }
+        .log-item__actions { display: flex; gap: 0.5rem; }
+        .log-item--adjustment .log-item__amount { color: var(--light-text-secondary); font-weight: 500; font-size: 0.9rem; }
+        .log-item--adjustment .log-item__meta { font-style: italic; }
+        .history-item-meta { font-size: 0.8rem; color: var(--light-text-muted); margin-bottom: 0.25rem; }
+        .history-item-action { font-weight: 500; color: var(--light-text-primary); }
+        .history-detail { font-size: 0.85rem; color: var(--light-text-secondary); margin-top: 0.75rem; list-style-type: none; padding-left: 1.25rem; border-left: 2px solid var(--light-border); }
+        .history-detail ul { padding-left: 1.25rem; margin-top: .25rem; }
+        .sticky-action-bar { position: fixed; bottom: 0; left: 0; right: 0; display: flex; gap: 1rem; padding: 1rem; background-color: rgba(255, 255, 255, 0.85); border-top: 1px solid var(--light-border); backdrop-filter: blur(8px); z-index: 999; box-shadow: 0 -4px 10px rgba(0,0,0,0.04); }
+        .sticky-action-bar .btn { flex-grow: 1; padding: 1.125rem; font-size: 1rem; }
+        .modal { display: none; position: fixed; z-index: 1000; inset: 0; width: 100%; height: 100%; background-color: rgba(17, 24, 39, 0.6); backdrop-filter: blur(4px); align-items: center; justify-content: center; animation: fadeIn 0.3s var(--ease); padding: 1rem; }
+        .modal-content { background-color: #fff; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); width: 100%; max-width: 450px; text-align: left; animation: popIn 0.3s var(--ease); }
+        .modal-message { font-size: 1.125rem; font-weight: 500; margin-bottom: 1.5rem; color: var(--light-text-primary); text-align: center; }
+        .modal-buttons { display: flex; justify-content: center; gap: 1rem; margin-top: 2rem; }
+        .loading-overlay { position: fixed; inset: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.9); z-index: 1001; display: flex; align-items: center; justify-content: center; }
+        .spinner { border: 6px solid var(--light-bg-tertiary); border-top: 6px solid var(--color-primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group.col-span-2 { grid-column: span 2; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.875rem; color: var(--light-text-secondary); }
+        .input-field { width: 100%; padding: 0.875rem; border: 1px solid var(--light-border); border-radius: var(--radius-md); font-size: 1rem; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+        .input-field:focus { border-color: var(--color-primary); outline: none; box-shadow: 0 0 0 3px var(--color-focus-ring); }
+        .desktop-view { display: none; }
+        @media (min-width: 900px) {
+            body { padding-bottom: 0; }
+            .mobile-view { display: none; }
+            .desktop-view { display: flex; }
+            .page-grid { grid-template-columns: 1fr 400px; gap: 2rem; padding: 2rem; }
+            .details-header { background: none; border: none; padding: 1.5rem 0 1.5rem 0; align-items: flex-start; }
+            .details-header__title h1 { font-size: 1.875rem; }
+            .sticky-action-bar { display: none; }
+            .content-section { padding: 1.5rem; background-color: var(--light-bg-primary); border: 1px solid var(--light-border); border-radius: var(--radius-lg); margin: 0; }
+            .grid-main, .grid-sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
+            .info-grid { grid-template-columns: 120px 1fr; }
+            .info-grid-item { display: grid; flex-direction: row; grid-template-columns: subgrid; grid-column: span 2; }
+            .info-grid dt { text-align: left; font-size: 0.9375rem; margin-bottom: 0; }
+            .action-links { margin-top: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <nav class="nav">
+                <div class="nav-left">
+                    <a href="#" id="dashboard-link">
+                        <img class="logo" src="https://ihtnas.com/assets/ihtnas-nav.png" alt="IHTNAS Journal Logo" width="200" height="50" loading="eager">
+                    </a>
+                    <div class="nav-links">
+                        <a class="nav-link" id="nav-link-home" href="#">Home</a>
+                        <a class="nav-link" id="nav-link-orders" href="view-orders.html">All Orders</a>
+                        <a class="nav-link" id="nav-link-secondary" href="#" style="display: none;"></a>
+                    </div>
+                </div>
+                <div class="nav-right">
+                    <div class="desktop-profile">
+                         <div class="profile-dropdown-container">
+                             <div class="profile-container" id="desktopProfileTrigger" tabindex="0" role="button" aria-haspopup="true" aria-expanded="false">
+                                <img src=" " class="profile-pic" alt="Profile Picture" id="desktop-profile-pic">
+                                <div class="profile-info">
+                                    <span class="profile-name" id="desktop-profile-name">Loading...</span>
+                                    <span class="profile-email" id="desktop-profile-email"></span>
+                                </div>
+                            </div>
+                            <div class="logout-popup" id="logoutPopup"><button class="logout-button" data-app-action="logout">Logout</button></div>
+                         </div>
+                    </div>
+                    <button class="menu-button" id="mobileMenuButton" aria-label="Open menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+                </div>
+            </nav>
+            <div class="divider"></div>
+        </div>
+    </header>
+
+    <div id="mobileMenu" role="dialog" aria-modal="true">
+        <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu"><svg viewBox="0 0 24 24"><path stroke="currentColor" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+        <div class="mobile-menu-content">
+            <div class="mobile-menu-section" id="mobile-menu-links">
+                <!-- Mobile links will be populated by JavaScript -->
+            </div>
+        </div>
+        <div class="mobile-menu-bottom">
+            <div class="profile-container"><img src="" class="profile-pic" alt="Profile Picture" id="mobile-profile-pic"><div class="profile-info"><span class="profile-name" id="mobile-profile-name">Loading...</span><span class="profile-email" id="mobile-profile-email"></span></div></div>
+            <button class="logout-button" data-app-action="logout">Logout</button>
+        </div>
+    </div>
+    <div id="menuOverlay"></div>
+
+    <div class="page-container">
+        <!-- MODALS & OVERLAYS (No changes) -->
+        <div id="confirmation-modal" class="modal"><div class="modal-content" style="text-align:center;"><p id="modal-message" class="modal-message"></p><div class="modal-buttons"><button id="cancel-action-btn" class="btn btn-secondary">Cancel</button><button id="confirm-action-btn" class="btn btn-danger">Confirm</button></div></div></div>
+        <div id="message-modal" class="modal"><div class="modal-content" style="text-align:left;"><p id="message-text" class="modal-message"></p><div class="modal-buttons"><button id="message-ok-btn" class="btn btn-primary" style="min-width: 120px; margin: 0 auto;">OK</button></div></div></div>
+        <div id="loading-overlay" class="loading-overlay" style="display: none;"><div class="spinner"></div></div>
+        <div id="payment-modal" class="modal"><div class="modal-content"><h3 id="payment-modal-title" style="margin-bottom: 1.5rem;">Add Payment</h3><form id="payment-form"><input type="hidden" id="payment-id"><div class="form-grid"><div class="form-group"><label for="payment-amount">Amount</label><input id="payment-amount" type="number" class="input-field" required min="0.01" step="0.01"></div><div class="form-group"><label for="payment-date">Date</label><input id="payment-date" type="date" class="input-field" required></div></div><div class="form-group"><label for="payment-type">Payment Type</label><select id="payment-type" class="input-field"><option>Cash</option><option>Online</option><option>Other</option></select></div><div class="form-group"><label for="payment-notes">Notes (Optional)</label><textarea id="payment-notes" class="input-field" rows="3"></textarea></div><div class="modal-buttons"><button type="button" class="btn btn-secondary" data-app-action="close-payment-modal">Cancel</button><button type="submit" class="btn btn-primary">Save Payment</button></div></form></div></div>
+        <div id="edit-total-modal" class="modal"><div class="modal-content"><h3>Edit Final Amount</h3><form id="edit-total-form" style="margin-top: 1.5rem;"><div class="form-group"><label for="final-total-input">Final Order Total</label><input id="final-total-input" type="number" step="0.01" required class="input-field"></div><div class="modal-buttons"><button type="button" class="btn btn-secondary" data-app-action="close-total-modal">Cancel</button><button type="submit" class="btn btn-primary">Save Amount</button></div></form></div></div>
+
+        <!-- PAGE STRUCTURE -->
+        <main id="order-details-screen" class="screen active">
+            <!-- SKELETON LOADER V3 (CORRECTED) -->
+            <div id="skeleton-loader">
+                <header class="details-header">
+                    <div class="skeleton skeleton-circle" style="width: 40px; height: 40px; flex-shrink: 0;"></div>
+                    <div class="details-header__title" style="gap: 1rem;">
+                        <div class="skeleton skeleton-line" style="height: 28px; width: 60%; max-width: 220px;"></div>
+                        <div class="skeleton skeleton-tag"></div>
+                    </div>
+                    <div class="skeleton skeleton-circle" style="width: 40px; height: 40px; flex-shrink: 0;"></div>
+                </header>
+                <div class="page-grid">
+                    <div class="grid-main">
+                        <!-- Metric Cards Skeleton -->
+                        <div class="key-metrics-card">
+                            <div class="metric-item"><div class="skeleton skeleton-line" style="height: 0.7rem; width: 80%; margin: 0.375rem auto;"></div><div class="skeleton skeleton-line" style="width: 60%; margin: 0 auto;"></div></div>
+                            <div class="metric-item"><div class="skeleton skeleton-line" style="height: 0.7rem; width: 80%; margin: 0.375rem auto;"></div><div class="skeleton skeleton-line" style="width: 60%; margin: 0 auto;"></div></div>
+                            <div class="metric-item"><div class="skeleton skeleton-line" style="height: 0.7rem; width: 80%; margin: 0.375rem auto;"></div><div class="skeleton skeleton-line" style="width: 60%; margin: 0 auto;"></div></div>
+                        </div>
+
+                        <!-- Mobile Skeleton -->
+                        <div class="mobile-view">
+                            <div class="skeleton-tabs">
+                                <nav class="skeleton-tabs__nav">
+                                    <div class="skeleton skeleton-line" style="height: 20px; width: 80px; margin: 1rem; border-radius: var(--radius-sm); animation: none;"></div>
+                                    <div class="skeleton skeleton-line" style="height: 20px; width: 120px; margin: 1rem; border-radius: var(--radius-sm); background-color: #f1f5f9; animation: none;"></div>
+                                    <div class="skeleton skeleton-line" style="height: 20px; width: 90px; margin: 1rem; border-radius: var(--radius-sm); background-color: #f1f5f9; animation: none;"></div>
+                                </nav>
+                                <div class="skeleton-card" style="margin-top: -1px; border-top-left-radius: 0; border-top-right-radius: 0; border-top: none;">
+                                    <div class="skeleton skeleton-line" style="width: 50%; height: 1.25rem;"></div>
+                                    <div class="skeleton-info-grid">
+                                        <div class="skeleton skeleton-line" style="width: 30%;"></div> <div class="skeleton skeleton-line" style="width: 70%;"></div>
+                                        <div style="height: 1rem;"></div>
+                                        <div class="skeleton skeleton-line" style="width: 30%;"></div> <div class="skeleton skeleton-line" style="width: 60%;"></div>
+                                    </div>
+                                    <div class="skeleton skeleton-line" style="width: 100%; height: 48px; margin-top: 1rem;"></div>
+                                    <div class="skeleton skeleton-line" style="width: 100%; height: 48px;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Desktop Skeleton -->
+                        <div class="desktop-view" style="flex-direction: column; gap: 1.5rem;">
+                            <div class="skeleton-card">
+                                <div class="skeleton skeleton-line" style="width: 40%; height: 1.25rem;"></div>
+                                <div class="skeleton-info-grid">
+                                    <div class="skeleton skeleton-line" style="width: 100%;"></div><div class="skeleton skeleton-line" style="width: 60%;"></div>
+                                    <div class="skeleton skeleton-line" style="width: 100%; margin-top: 1rem;"></div><div class="skeleton skeleton-line" style="width: 70%; margin-top: 1rem;"></div>
+                                    <div class="skeleton skeleton-line" style="width: 100%; margin-top: 1rem;"></div><div class="skeleton skeleton-line" style="width: 50%; margin-top: 1rem;"></div>
+                                </div>
+                            </div>
+                            <div class="skeleton-card">
+                                <div class="skeleton skeleton-line" style="width: 30%; height: 1.25rem;"></div>
+                                <div class="skeleton skeleton-line" style="height: 48px;"></div>
+                                <div class="skeleton skeleton-line" style="height: 48px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-sidebar desktop-view">
+                         <div class="skeleton-card">
+                            <div class="skeleton skeleton-line" style="width: 60%; height: 1.25rem;"></div>
+                            <div class="skeleton skeleton-line" style="height: 40px;"></div>
+                            <div class="skeleton skeleton-line" style="height: 40px; opacity: 0.7;"></div>
+                            <div class="skeleton skeleton-line" style="height: 40px; opacity: 0.5;"></div>
+                         </div>
+                         <div class="skeleton-card">
+                            <div class="skeleton skeleton-line" style="width: 50%; height: 1.25rem;"></div>
+                            <div class="skeleton skeleton-line" style="height: 40px;"></div>
+                            <div class="skeleton skeleton-line" style="height: 40px; opacity: 0.7;"></div>
+                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REAL CONTENT (EXACT ORIGINAL STRUCTURE FOR FUNCTIONAL GUARANTEE) -->
+            <div id="real-content" style="display: none; animation: fadeIn 0.5s var(--ease);">
+                <header class="details-header">
+                    <button id="new-back-btn" class="icon-btn"><span class="material-symbols-outlined">arrow_back</span></button>
+                    <div class="details-header__title">
+                        <h1 id="detail-customer-name"></h1>
+                        <div id="detail-status-tag" class="status-tag"></div>
+                    </div>
+                    <div class="actions-menu-container">
+                        <button id="actions-menu-btn" class="icon-btn"><span class="material-symbols-outlined">more_vert</span></button>
+                        <div id="actions-dropdown" class="actions-dropdown">
+                            <button id="menu-edit-btn"><span class="icon material-symbols-outlined">edit</span>Edit Order</button>
+                            <hr id="menu-divider" style="display:none;">
+                            <button id="menu-edit-total-btn" style="display:none;"><span class="icon material-symbols-outlined">payments</span>Edit Final Amount</button>
+                            <button id="menu-delete-btn" style="display: none; color: var(--color-danger);"><span class="icon material-symbols-outlined" style="color: var(--color-danger);">delete</span>Delete Order</button>
+                        </div>
+                    </div>
+                </header>
+                <div class="page-grid">
+                    <div class="grid-main">
+                        <div id="key-metrics-card" class="key-metrics-card" style="display:none;">
+                            <div class="metric-item"><div class="metric-item__label">Due Date</div><div id="metric-due-date" class="metric-item__value"></div></div>
+                            <div class="metric-item"><div class="metric-item__label">Final Total</div><div id="metric-final-total" class="metric-item__value"></div></div>
+                            <div class="metric-item"><div class="metric-item__label">Pending Amount</div><div id="metric-pending-amount" class="metric-item__value pending"></div></div>
+                        </div>
+                        
+                        <div class="mobile-view">
+                            <div class="tabs">
+                                <nav class="tabs__nav">
+                                    <button class="tabs__button active" data-tab="details">Details</button>
+                                    <button class="tabs__button" data-tab="payments" style="display:none;">Financial Log</button>
+                                    <button class="tabs__button" data-tab="history">History</button>
+                                </nav>
+                                <div id="tab-details" class="tabs__content-pane active">
+                                    <section class="content-section">
+                                        <h3>Customer & Order Info</h3>
+                                        <dl class="info-grid">
+                                            <div class="info-grid-item"><dt>Address</dt><dd class="detail-customer-address"></dd></div><div class="info-grid-item"><dt>Mobile</dt><dd class="detail-customer-mobile"></dd></div>
+                                            <div class="info-grid-item"><dt>Placed On</dt><dd class="detail-order-taken-date"></dd></div><div class="info-grid-item"><dt>Due Date</dt><dd class="detail-due-date"></dd></div>
+                                            <div class="info-grid-item"><dt>Created By</dt><dd class="detail-created-by"></dd></div>
+                                        </dl>
+                                        <div class="completed-info-block" style="display:none; margin-top: 1rem;"><dl class="info-grid"><div class="info-grid-item"><dt>Completed On</dt><dd class="detail-completed-date"></dd></div><div class="info-grid-item"><dt>Completed By</dt><dd class="detail-completed-by"></dd></div></dl></div>
+                                        <div class="action-links">
+                                            <a href="#" class="action-link-item detail-get-directions-btn"><span class="icon material-symbols-outlined">directions</span><span class="label">Get Directions</span><span class="chevron material-symbols-outlined">chevron_right</span></a>
+                                            <a href="#" class="action-link-item detail-view-quote-btn"><span class="icon material-symbols-outlined">request_quote</span><span class="label">View Quote</span><span class="chevron material-symbols-outlined">chevron_right</span></a>
+                                            <a href="#" class="action-link-item detail-view-bill-btn"><span class="icon material-symbols-outlined">receipt_long</span><span class="label">View Bill</span><span class="chevron material-symbols-outlined">chevron_right</span></a>
+                                        </div>
+                                    </section>
+                                    <section class="content-section"><h3>Windows (<span class="detail-window-count"></span>)</h3><div class="detail-windows-list"></div></section>
+                                </div>
+                                <div id="tab-payments" class="tabs__content-pane"><section class="content-section" data-section="payment-management"><h3>Financial Log</h3><ul class="financial-log"></ul></section></div>
+                                <div id="tab-history" class="tabs__content-pane"><section class="content-section" data-section="history"><h3>Order History</h3><ul class="history-list"></ul></section></div>
+                            </div>
+                        </div>
+
+                        <div class="desktop-view" style="flex-direction: column; gap: 1.5rem;">
+                            <section class="content-section">
+                                <h3>Customer & Order Info</h3>
+                                <dl class="info-grid">
+                                    <div class="info-grid-item"><dt>Address</dt><dd class="detail-customer-address"></dd></div><div class="info-grid-item"><dt>Mobile</dt><dd class="detail-customer-mobile"></dd></div>
+                                    <div class="info-grid-item"><dt>Placed On</dt><dd class="detail-order-taken-date"></dd></div><div class="info-grid-item"><dt>Due Date</dt><dd class="detail-due-date"></dd></div>
+                                    <div class="info-grid-item"><dt>Created By</dt><dd class="detail-created-by"></dd></div>
+                                </dl>
+                                <div class="completed-info-block" style="display:none; margin-top: 1rem;"><dl class="info-grid"><div class="info-grid-item"><dt>Completed On</dt><dd class="detail-completed-date"></dd></div><div class="info-grid-item"><dt>Completed By</dt><dd class="detail-completed-by"></dd></div></dl></div>
+                                <div class="action-links">
+                                   <a href="#" class="action-link-item detail-get-directions-btn"><span class="icon material-symbols-outlined">directions</span><span class="label">Get Directions</span><span class="chevron material-symbols-outlined">chevron_right</span></a>
+                                   <a href="#" class="action-link-item detail-view-quote-btn"><span class="icon material-symbols-outlined">request_quote</span><span class="label">View Quote</span><span class="chevron material-symbols-outlined">chevron_right</span></a>
+                                   <a href="#" class="action-link-item detail-view-bill-btn"><span class="icon material-symbols-outlined">receipt_long</span><span class="label">View Bill</span><span class="chevron material-symbols-outlined">chevron_right</span></a>
+                                </div>
+                            </section>
+                            <section class="content-section"><h3>Windows (<span class="detail-window-count"></span>)</h3><div class="detail-windows-list"></div></section>
+                        </div>
+                    </div>
+                    <div class="grid-sidebar desktop-view">
+                        <section class="content-section" data-section="payment-management" style="display: none;">
+                            <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--light-border);">
+                                <h3>Financial Log</h3>
+                                <button data-app-action="add-payment" class="btn btn-primary" style="display: none; padding: 0.5rem 1rem; font-size: 0.875rem;"><span class="material-symbols-outlined" style="font-size: 1.125rem;">add_card</span> Add</button>
+                            </div>
+                            <ul class="financial-log"></ul>
+                        </section>
+                        <section class="content-section" data-section="history"><h3>Order History</h3><ul class="history-list"></ul></section>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <footer class="sticky-action-bar">
+        <button data-app-action="add-payment" class="btn btn-secondary" style="display:none;">Add Payment</button>
+        <button id="detail-complete-btn" class="btn btn-success"></button>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, getDocs, updateDoc, deleteDoc, collection, serverTimestamp, deleteField, query, orderBy, addDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // --- DOM ELEMENTS ---
+        const skeletonLoader = document.getElementById('skeleton-loader');
+        const realContent = document.getElementById('real-content');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const newBackBtn = document.getElementById('new-back-btn');
+        const actionsMenuBtn = document.getElementById('actions-menu-btn');
+        const actionsDropdown = document.getElementById('actions-dropdown');
+        const menuEditBtn = document.getElementById('menu-edit-btn');
+        const menuEditTotalBtn = document.getElementById('menu-edit-total-btn');
+        const menuDeleteBtn = document.getElementById('menu-delete-btn');
+        const menuDivider = document.getElementById('menu-divider');
+        const detailCompleteBtn = document.getElementById('detail-complete-btn');
+        const tabsContainer = document.querySelector('.tabs');
+        const tabButtons = document.querySelectorAll('.tabs__button');
+        const paymentsTabButton = document.querySelector('.tabs__button[data-tab="payments"]');
+        const contentPanes = document.querySelectorAll('.tabs__content-pane');
+        const confirmationModal = document.getElementById('confirmation-modal');
+        const modalMessage = document.getElementById('modal-message');
+        const confirmActionBtn = document.getElementById('confirm-action-btn');
+        const cancelActionBtn = document.getElementById('cancel-action-btn');
+        const messageModal = document.getElementById('message-modal');
+        const messageText = document.getElementById('message-text');
+        const messageOkBtn = document.getElementById('message-ok-btn');
+        const paymentModal = document.getElementById('payment-modal');
+        const paymentForm = document.getElementById('payment-form');
+        const paymentModalTitle = document.getElementById('payment-modal-title');
+        const editTotalModal = document.getElementById('edit-total-modal');
+        const editTotalForm = document.getElementById('edit-total-form');
+        const finalTotalInput = document.getElementById('final-total-input');
+        
+        let db, auth, currentOrder, currentOrderId, currentUserProfile, currentUserName;
+        let currentAction = {};
+        const ADMIN_EMAIL = "__ADMIN_EMAIL__";
+
+        // --- CORE UI & HELPER FUNCTIONS ---
+        const showLoading = () => loadingOverlay.style.display = 'flex';
+        const hideLoading = () => loadingOverlay.style.display = 'none';
+        const showMessageModal = (message) => { messageText.textContent = message; messageModal.style.display = 'flex'; };
+        const formatCurrency = (num) => `₹${num.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        const showConfirmationModal = (message, confirmClass, confirmText, callback) => { modalMessage.textContent = message; confirmActionBtn.className = 'btn ' + confirmClass; confirmActionBtn.textContent = confirmText; currentAction.callback = callback; confirmationModal.style.display = 'flex'; };
+        const hideConfirmationModal = () => { confirmationModal.style.display = 'none'; };
+        async function performConfirmedAction() { hideConfirmationModal(); showLoading(); try { await currentAction.callback(); } catch (error) { showMessageModal(`Action failed.`); console.error(error); } finally { hideLoading(); } }
+        async function logHistory(action, details = {}) { try { await addDoc(collection(db, `upvc_orders/${currentOrderId}/history`), { action, details, modifiedBy: currentUserName, timestamp: serverTimestamp() }); } catch (error) { console.error("Error logging history:", error); } }
+
+        function renderOrderDetails(order) {
+            currentOrder = order;
+            const isAdmin = currentUserProfile?.role === 'admin';
+            document.querySelectorAll('#detail-customer-name').forEach(el => el.textContent = order.name);
+            document.querySelectorAll('#detail-status-tag').forEach(el => {
+                const today = new Date(); today.setHours(0,0,0,0);
+                const statusInfo = getStatusInfo(order, today);
+                el.className = 'status-tag ' + statusInfo.className;
+                el.textContent = statusInfo.text;
+            });
+            document.querySelectorAll('.detail-customer-address').forEach(el => el.textContent = order.address || 'N/A');
+            document.querySelectorAll('.detail-customer-mobile').forEach(el => el.textContent = order.mobileNumber || 'N/A');
+            document.querySelectorAll('.detail-order-taken-date').forEach(el => el.textContent = order.createdAt?.toDate ? new Date(order.createdAt.toDate()).toLocaleDateString() : 'N/A');
+            document.querySelectorAll('.detail-due-date').forEach(el => el.textContent = order.dueDate || 'N/A');
+            document.querySelectorAll('.detail-created-by').forEach(el => el.textContent = order.createdBy || 'N/A');
+            document.querySelectorAll('.completed-info-block').forEach(block => {
+                block.style.display = order.status === 'completed' ? 'block' : 'none';
+                if (order.status === 'completed') {
+                    block.querySelector('.detail-completed-date').textContent = order.completedAt?.toDate ? new Date(order.completedAt.toDate()).toLocaleDateString() : 'N/A';
+                    block.querySelector('.detail-completed-by').textContent = order.completedBy || 'N/A';
+                }
+            });
+            let windowsToDisplay = [];
+            try { windowsToDisplay = JSON.parse(order.windows || '[]'); } catch(e) {}
+            const windowsHtml = windowsToDisplay.length > 0 ? windowsToDisplay.map((win, i) => { const glassInfo = win.hasGlass ? `<small>Glass: ${win.glassName || 'Not specified'}</small>` : '<small>No Glass</small>'; const itemName = win.itemType ? (win.itemType.charAt(0).toUpperCase() + win.itemType.slice(1)) : 'Window'; return `<div class="detail-window-item"><div class="item-number">${i + 1}</div><div class="item-info"><strong>${itemName}:</strong> H: ${win.height} mm, W: ${win.width} mm ${glassInfo}</div></div>`; }).join('') : '<p>No window details available.</p>';
+            document.querySelectorAll('.detail-windows-list').forEach(list => list.innerHTML = windowsHtml);
+            document.querySelectorAll('.detail-window-count').forEach(el => el.textContent = windowsToDisplay.length);
+            document.querySelectorAll('.detail-get-directions-btn').forEach(btn => btn.style.display = (order.latitude && order.longitude) ? 'flex' : 'none');
+            if (isAdmin) {
+                document.getElementById('key-metrics-card').style.display = 'grid';
+                paymentsTabButton.style.display = 'flex';
+                menuDeleteBtn.style.display = 'flex';
+                menuEditTotalBtn.style.display = 'flex';
+                menuDivider.style.display = 'block';
+                document.querySelectorAll('[data-app-action="add-payment"]').forEach(btn => btn.style.display = 'inline-flex');
+                document.querySelectorAll('[data-section="payment-management"]').forEach(sec => sec.style.display = 'block');
+            }
+            if (order.status === 'completed') {
+                detailCompleteBtn.innerHTML = '<span class="material-symbols-outlined">refresh</span>Reopen Order';
+                detailCompleteBtn.className = 'btn btn-reopen';
+                menuEditBtn.disabled = true;
+            } else {
+                detailCompleteBtn.innerHTML = '<span class="material-symbols-outlined">check_circle</span>Mark as Complete';
+                detailCompleteBtn.className = 'btn btn-success';
+                menuEditBtn.disabled = false;
+            }
+        }
+        function renderFinancialLog(logItems, container) { container.innerHTML = logItems.length === 0 ? '<li><p style="text-align:center; color:var(--light-text-muted); padding: 1rem 0;">No transactions recorded.</p></li>' : logItems.map(item => { if (item.type === 'adjustment') { return `<li class="log-item log-item--adjustment"><div class="log-item__info"><span class="log-item__amount">Total Amount Adjusted</span><span class="log-item__meta">From ${item.details.from} to ${item.details.to}</span></div><span>${item.date.toLocaleDateString()}</span></li>`; } const notesHtml = item.notes ? `<span class="notes">${item.notes}</span>` : ''; const actionsHtml = `<div class="log-item__actions"><button class="icon-btn" data-app-action="edit-payment" data-id="${item.id}"><span class="material-symbols-outlined" style="font-size: 18px;">edit</span></button><button class="icon-btn" data-app-action="delete-payment" data-id="${item.id}" data-amount="${item.amount}"><span class="material-symbols-outlined" style="font-size: 18px;">delete</span></button></div>`; return `<li class="log-item"><div class="log-item__info"><span class="log-item__amount">${formatCurrency(item.amount)}</span><span class="log-item__meta">${item.paymentType} ${notesHtml}</span></div><div style="text-align:right;"><span>${item.date.toLocaleDateString()}</span>${actionsHtml}</div></li>`; }).join('');}
+        function renderHistory(historyItems, container) { container.innerHTML = historyItems.length === 0 ? '<li>No history found.</li>' : historyItems.map(entry => { const timestamp = entry.timestamp?.toDate ? entry.timestamp.toDate().toLocaleString() : 'Just now'; let detailsHtml = ''; if (entry.details && Object.keys(entry.details).length > 0) { detailsHtml += '<ul class="history-detail">'; for (const [key, value] of Object.entries(entry.details)) { if (typeof value === 'object' && value !== null) { detailsHtml += `<li><strong>${key}:</strong><ul>`; for (const [subKey, subValue] of Object.entries(value)) { detailsHtml += `<li><strong>${subKey}:</strong> ${subValue}</li>`; } detailsHtml += '</ul></li>'; } else { detailsHtml += `<li><strong>${key}:</strong> ${value}</li>`; } } detailsHtml += '</ul>'; } return `<li class="history-item"><div class="history-item-meta">${timestamp} by <strong>${entry.modifiedBy || 'System'}</strong></div><div class="history-item-action">${entry.action}</div>${detailsHtml}</li>`; }).join(''); }
+        function updateMetrics(payments) { const totalCollected = payments.reduce((sum, p) => sum + p.amount, 0); const finalTotal = currentOrder.finalTotal || 0; const pendingAmount = finalTotal - totalCollected; document.querySelectorAll('#metric-due-date').forEach(el => el.textContent = currentOrder.dueDate || 'N/A'); document.querySelectorAll('#metric-final-total').forEach(el => el.textContent = formatCurrency(finalTotal)); document.querySelectorAll('#metric-pending-amount').forEach(el => el.textContent = formatCurrency(pendingAmount)); }
+        const getStatusInfo = (order, today) => { if (order.status === 'completed') return { text: 'Completed', className: 'completed' }; const dueDate = order.dueDate ? new Date(order.dueDate + 'T00:00:00') : null; if (dueDate && dueDate < today) return { text: 'Overdue', className: 'overdue' }; if (dueDate) { const daysDiff = Math.ceil((dueDate.getTime() - today.getTime()) / (1000 * 3600 * 24)); if (daysDiff >= 0 && daysDiff <= 3) return { text: `Due in ${daysDiff} day${daysDiff !== 1 ? 's' : ''}`, className: 'upcoming-due' }; } return { text: 'Pending', className: 'pending' }; };
+        function handleDeleteOrder() { showConfirmationModal('Delete this order permanently?', 'btn-danger', 'Delete Order', async () => { await logHistory('Order Deleted'); await deleteDoc(doc(db, 'upvc_orders', currentOrderId)); showMessageModal('Order deleted.'); setTimeout(() => window.location.href = 'view-orders.html', 1500); });}
+        function handleCompleteOrder() { const isCompleted = currentOrder.status === 'completed'; const action = isCompleted ? { confirm: { title: 'Reopen this order?', class: 'btn-reopen', text: 'Reopen Order' }, update: { status: 'pending', completedAt: deleteField(), completedBy: deleteField() }, log: 'Order Reopened' } : { confirm: { title: 'Mark this order as complete?', class: 'btn-success', text: 'Mark Complete' }, update: { status: 'completed', completedAt: serverTimestamp(), completedBy: currentUserName }, log: 'Order Completed' }; showConfirmationModal(action.confirm.title, action.confirm.class, action.confirm.text, async () => { await updateDoc(doc(db, 'upvc_orders', currentOrderId), action.update); await logHistory(action.log); await loadAndDisplayOrder(currentOrderId); }); }
+        async function handlePaymentFormSubmit(e) { e.preventDefault(); showLoading(); const paymentId = paymentForm.querySelector('#payment-id').value; const data = { amount: parseFloat(paymentForm.querySelector('#payment-amount').value), date: paymentForm.querySelector('#payment-date').value, type: paymentForm.querySelector('#payment-type').value, notes: paymentForm.querySelector('#payment-notes').value.trim(), timestamp: serverTimestamp() }; try { const paymentsRef = collection(db, `upvc_orders/${currentOrderId}/payments`); if (paymentId) { await setDoc(doc(paymentsRef, paymentId), data); await logHistory("Payment Edited"); } else { await addDoc(paymentsRef, data); await logHistory("Payment Added"); } paymentModal.style.display = 'none'; await loadFinancialAndHistoryData(); } catch (error) { console.error("Error saving payment:", error); showMessageModal("Could not save payment."); } finally { hideLoading(); }}
+        async function openPaymentModalForEdit(paymentId) { const paymentDoc = await getDoc(doc(db, `upvc_orders/${currentOrderId}/payments`, paymentId)); if(paymentDoc.exists()){ const payment = paymentDoc.data(); paymentModalTitle.textContent = "Edit Payment"; paymentForm.querySelector('#payment-id').value = paymentId; paymentForm.querySelector('#payment-amount').value = payment.amount; paymentForm.querySelector('#payment-date').value = payment.date; paymentForm.querySelector('#payment-type').value = payment.type; paymentForm.querySelector('#payment-notes').value = payment.notes || ''; paymentModal.style.display = 'flex'; } }
+        function handleDeletePayment(paymentId, amount) { showConfirmationModal(`Delete this payment of ${formatCurrency(amount)}?`, 'btn-danger', 'Delete Payment', async () => { await deleteDoc(doc(db, `upvc_orders/${currentOrderId}/payments`, paymentId)); await logHistory('Payment Deleted'); await loadFinancialAndHistoryData(); }); }
+        function openPaymentModal() { paymentForm.reset(); paymentForm.querySelector('#payment-id').value = ''; paymentModalTitle.textContent = "Add Payment"; document.getElementById('payment-date').value = new Date().toISOString().split('T')[0]; paymentModal.style.display = 'flex'; }
+        function openEditTotalModal() { finalTotalInput.value = currentOrder.finalTotal || 0; editTotalModal.style.display = 'flex'; finalTotalInput.focus(); }
+        async function handleFinalTotalUpdate(e) { e.preventDefault(); const newTotal = parseFloat(finalTotalInput.value); const currentTotal = currentOrder.finalTotal || 0; if (isNaN(newTotal) || newTotal === currentTotal) { editTotalModal.style.display = 'none'; return; } showLoading(); try { await updateDoc(doc(db, 'upvc_orders', currentOrderId), { finalTotal: newTotal }); await logHistory("Final Total Updated", { from: formatCurrency(currentTotal), to: formatCurrency(newTotal) }); editTotalModal.style.display = 'none'; await loadAndDisplayOrder(currentOrderId); } catch (error) { showMessageModal("Failed to update total."); } finally { hideLoading(); } }
+        
+        async function loadFinancialAndHistoryData() { const paymentsQuery = query(collection(db, `upvc_orders/${currentOrderId}/payments`), orderBy('timestamp', 'desc')); const historyQuery = query(collection(db, `upvc_orders/${currentOrderId}/history`), orderBy('timestamp', 'desc')); const [paymentsSnap, historySnap] = await Promise.all([ getDocs(paymentsQuery), getDocs(historyQuery) ]); const financialLogItems = []; const operationalHistoryItems = []; historySnap.docs.forEach(doc => { const entry = doc.data(); const action = entry.action || ''; if (action.includes('Payment') || action.includes('Total')) { if (currentUserProfile?.role === 'admin' && action === 'Final Total Updated') { financialLogItems.push({ ...entry, type: 'adjustment', date: entry.timestamp.toDate() }); } } else { operationalHistoryItems.push(entry); } }); const payments = paymentsSnap.docs.map(doc => ({ id: doc.id, ...doc.data(), type: 'payment', paymentType: doc.data().type, date: new Date(doc.data().date) })); const paymentsForMetrics = paymentsSnap.docs.map(doc => doc.data()); if (currentUserProfile?.role === 'admin') { financialLogItems.push(...payments); financialLogItems.sort((a, b) => { const dateA = a.timestamp?.toDate(); const dateB = b.timestamp?.toDate(); if (!dateA && !dateB) return b.date - a.date; if (!dateA) return 1; if (!dateB) return -1; return dateB - dateA; }); } document.querySelectorAll('.history-list').forEach(list => renderHistory(operationalHistoryItems, list)); if (currentUserProfile?.role === 'admin') { document.querySelectorAll('.financial-log').forEach(log => renderFinancialLog(financialLogItems, log)); updateMetrics(paymentsForMetrics); }}
+        
+        function populateNavbar(user, userProfile) {
+            const defaultPhoto = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23e5e7eb"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>';
+            document.getElementById('desktop-profile-pic').src = user.photoURL || defaultPhoto;
+            document.getElementById('desktop-profile-name').textContent = user.displayName || 'User';
+            document.getElementById('desktop-profile-email').textContent = user.email || '';
+            document.getElementById('mobile-profile-pic').src = user.photoURL || defaultPhoto;
+            document.getElementById('mobile-profile-name').textContent = user.displayName || 'User';
+            document.getElementById('mobile-profile-email').textContent = user.email || '';
+
+            const isAdmin = user.email === ADMIN_EMAIL || userProfile.role === 'admin';
+            const homeLink = isAdmin ? 'admin-dashboard.html' : 'employee-dashboard.html';
+            const secondaryLink = isAdmin ? { href: 'admin-employees.html', text: 'Manage Employees' } : { href: 'my-attendance.html', text: 'My Attendance' };
+            const secondaryIcon = isAdmin 
+                ? 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' 
+                : 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z';
+
+            // Update desktop links
+            document.getElementById('dashboard-link').href = homeLink;
+            document.getElementById('nav-link-home').href = homeLink;
+            const navLinkSecondary = document.getElementById('nav-link-secondary');
+            navLinkSecondary.href = secondaryLink.href;
+            navLinkSecondary.textContent = secondaryLink.text;
+            navLinkSecondary.style.display = 'flex';
+
+            // Update mobile menu links
+            const mobileLinksContainer = document.getElementById('mobile-menu-links');
+            mobileLinksContainer.innerHTML = `
+                <a href="${homeLink}" class="mobile-nav-link"><svg class="mobile-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg><span>Home</span></a>
+                <a href="view-orders.html" class="mobile-nav-link"><svg class="mobile-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg><span>All Orders</span></a>
+                <a href="${secondaryLink.href}" class="mobile-nav-link"><svg class="mobile-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${secondaryIcon}" /></svg><span>${secondaryLink.text}</span></a>`;
+        }
+        
+        function initializeNavbar() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const mobileMenuButton = document.getElementById('mobileMenuButton');
+            const mobileMenuClose = document.getElementById('mobileMenuClose');
+            const menuOverlay = document.getElementById('menuOverlay');
+            const desktopProfileTrigger = document.getElementById('desktopProfileTrigger');
+            const logoutPopup = document.getElementById('logoutPopup');
+
+            function closeMobileMenu() { if (mobileMenu.classList.contains('active')) { mobileMenu.classList.remove('active'); menuOverlay.classList.remove('active'); document.body.style.overflow = ''; } }
+            
+            mobileMenuButton.addEventListener('click', () => { mobileMenu.classList.add('active'); menuOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; });
+            mobileMenuClose.addEventListener('click', closeMobileMenu);
+            menuOverlay.addEventListener('click', closeMobileMenu);
+
+            if (desktopProfileTrigger && logoutPopup) {
+                desktopProfileTrigger.addEventListener('click', (event) => { event.stopPropagation(); const isExpanded = desktopProfileTrigger.getAttribute('aria-expanded') === 'true'; logoutPopup.classList.toggle('show'); desktopProfileTrigger.setAttribute('aria-expanded', !isExpanded); });
+                window.addEventListener('click', (event) => { if (!desktopProfileTrigger.contains(event.target) && !logoutPopup.contains(event.target)) { if (logoutPopup.classList.contains('show')) { logoutPopup.classList.remove('show'); desktopProfileTrigger.setAttribute('aria-expanded', 'false'); } } });
+            }
+
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeMobileMenu(); if (logoutPopup && logoutPopup.classList.contains('show')) { logoutPopup.classList.remove('show'); desktopProfileTrigger.setAttribute('aria-expanded', 'false'); } } });
+            window.addEventListener('resize', () => { if (window.innerWidth > 768) closeMobileMenu(); });
+        }
+        
+        async function loadAndDisplayOrder(orderId) { 
+            const orderRef = doc(db, 'upvc_orders', orderId); 
+            const orderSnap = await getDoc(orderRef); 
+            if (orderSnap.exists()) { 
+                renderOrderDetails({ id: orderSnap.id, ...orderSnap.data() }); 
+                await loadFinancialAndHistoryData();
+                skeletonLoader.style.display = 'none';
+                realContent.style.display = 'block';
+            } else { 
+                showMessageModal("Order not found."); 
+                skeletonLoader.innerHTML = '<h2 style="text-align:center; padding: 2rem;">Order Not Found</h2>';
+            } 
+        }
+        
+        async function initializeFirebase() { 
+            const firebaseConfig = { apiKey: "__API_KEY__", authDomain: "__AUTH_DOMAIN__", projectId: "__PROJECT_ID__", storageBucket: "__STORAGE_BUCKET__", messagingSenderId: "__MESSAGING_SENDER_ID__", appId: "__APP_ID__" }; 
+            const app = initializeApp(firebaseConfig); 
+            db = getFirestore(app); 
+            auth = getAuth(app); 
+            
+            initializeNavbar();
+            
+            onAuthStateChanged(auth, async (user) => { 
+                if (user) { 
+                    const userDoc = await getDoc(doc(db, "users", user.uid)); 
+                    if (!userDoc.exists() || userDoc.data().status !== 'approved') { 
+                        window.location.href = 'login.html'; 
+                        return; 
+                    } 
+                    currentUserProfile = { id: userDoc.id, ...userDoc.data() }; 
+                    currentUserName = currentUserProfile.displayName || "User"; 
+                    
+                    populateNavbar(user, currentUserProfile);
+                    
+                    const urlParams = new URLSearchParams(window.location.search); 
+                    currentOrderId = urlParams.get('id'); 
+                    if (currentOrderId) { 
+                        await loadAndDisplayOrder(currentOrderId); 
+                    } else { 
+                        showMessageModal("No order specified."); 
+                        skeletonLoader.innerHTML = '<h2 style="text-align:center; padding: 2rem;">No Order ID Provided</h2>';
+                    } 
+                } else { 
+                    window.location.href = 'login.html'; 
+                } 
+            }); 
+        }
+        
+        // --- EVENT LISTENERS ---
+        newBackBtn.addEventListener('click', () => window.location.href = 'view-orders.html');
+        actionsMenuBtn.addEventListener('click', (e) => { e.stopPropagation(); actionsDropdown.classList.toggle('show'); });
+        window.addEventListener('click', () => { if (actionsDropdown.classList.contains('show')) actionsDropdown.classList.remove('show'); });
+        menuEditBtn.addEventListener('click', () => window.location.href = `order-form.html?id=${currentOrderId}`);
+        menuEditTotalBtn.addEventListener('click', openEditTotalModal);
+        menuDeleteBtn.addEventListener('click', handleDeleteOrder);
+        detailCompleteBtn.addEventListener('click', handleCompleteOrder);
+        tabsContainer.addEventListener('click', (e) => { const clickedTab = e.target.closest('.tabs__button'); if (!clickedTab) return; tabButtons.forEach(btn => btn.classList.remove('active')); contentPanes.forEach(pane => pane.classList.remove('active')); clickedTab.classList.add('active'); document.getElementById(`tab-${clickedTab.dataset.tab}`).classList.add('active'); });
+        messageOkBtn.addEventListener('click', () => messageModal.style.display = 'none');
+        cancelActionBtn.addEventListener('click', hideConfirmationModal);
+        confirmActionBtn.addEventListener('click', performConfirmedAction);
+        document.querySelector('[data-app-action="close-payment-modal"]').addEventListener('click', () => paymentModal.style.display = 'none');
+        document.querySelector('[data-app-action="close-total-modal"]').addEventListener('click', () => editTotalModal.style.display = 'none');
+        paymentForm.addEventListener('submit', handlePaymentFormSubmit);
+        editTotalForm.addEventListener('submit', handleFinalTotalUpdate);
+        
+        document.body.addEventListener('click', async (e) => {
+            const appActionTarget = e.target.closest('[data-app-action]');
+            if (appActionTarget) {
+                const action = appActionTarget.dataset.appAction;
+                switch (action) {
+                    case 'logout': await signOut(auth); break;
+                    case 'add-payment': openPaymentModal(); break;
+                    case 'edit-payment': openPaymentModalForEdit(appActionTarget.dataset.id); break;
+                    case 'delete-payment': handleDeletePayment(appActionTarget.dataset.id, parseFloat(appActionTarget.dataset.amount)); break;
+                }
+            }
+            const directionsBtn = e.target.closest('.detail-get-directions-btn');
+            if (directionsBtn) { e.preventDefault(); window.open(`https://www.google.com/maps/dir/?api=1&destination=${currentOrder.latitude},${currentOrder.longitude}`, '_blank'); }
+            const quoteBtn = e.target.closest('.detail-view-quote-btn');
+            if (quoteBtn) { e.preventDefault(); window.location.href = `quote.html?id=${currentOrderId}`; }
+            const billBtn = e.target.closest('.detail-view-bill-btn');
+            if (billBtn) { e.preventDefault(); window.location.href = `bill.html?id=${currentOrderId}`; }
+        });
+        
+        // --- INITIALIZE APP ---
+        initializeFirebase();
+
+    </script>
+</body>
+</html>

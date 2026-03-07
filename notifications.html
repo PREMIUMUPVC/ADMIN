@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayrollPro - Notifications</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* All original styles are preserved */
+        :root { --font-main: 'Inter', sans-serif; --ease-cubic: cubic-bezier(0.4, 0, 0.2, 1); --radius-sm: 4px; --radius-md: 8px; --radius-lg: 16px; --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05); --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); --shadow-focus-ring: 0 0 0 3px; }
+        [data-theme="light"] { --color-primary: #4f46e5; --color-primary-light: #e0e7ff; --color-primary-dark: #3730a3; --color-secondary: #475569; --color-background: #f8fafc; --color-surface: #ffffff; --color-text-primary: #1f2937; --color-text-secondary: #64748b; --color-border: #e5e7eb; --color-success: #16a34a; --color-danger: #dc2626; --color-warning: #f59e0b; --color-success-bg: #f0fdf4; --color-danger-bg: #fef2f2; --color-warning-bg: #fffbeb; }
+        [data-theme="dark"] { --color-primary: #818cf8; --color-primary-light: rgba(129, 140, 248, 0.16); --color-primary-dark: #a7affb; --color-secondary: #94a3b8; --color-background: #0f172a; --color-surface: #1e293b; --color-text-primary: #f1f5f9; --color-text-secondary: #94a3b8; --color-border: #334155; --color-success: #4ade80; --color-danger: #f87171; --color-warning: #facc15; --color-success-bg: rgba(74, 222, 128, 0.1); --color-danger-bg: rgba(248, 113, 113, 0.1); --color-warning-bg: rgba(250, 204, 21, 0.1); }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; }
+        body { font-family: var(--font-main); background-color: var(--color-background); color: var(--color-text-primary); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+        h1, h2, h3 { font-weight: 600; letter-spacing: -0.025em; }
+        h1 { font-size: 2rem; } h2 { font-size: 1.25rem; color: var(--color-text-primary); margin-bottom: 1.5rem; }
+        .view.active { display: block; animation: fadeIn 0.5s var(--ease-cubic); }
+        .icon-sm { width: 16px; height: 16px; }
+        .app-container { display: block; }
+        main { padding-top: 48px; padding-bottom: 48px; }
+        .app-header { height: 65px; background-color: hsla(0, 0%, 100%, 0.8); border-bottom: 1px solid var(--color-border); padding: 0 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(8px); }
+        [data-theme="dark"] .app-header { background-color: hsla(222, 47%, 11%, 0.8); }
+        .nav-left, .nav-right { display: flex; align-items: center; gap: 16px; }
+        .profile-menu { position: relative; }
+        #profile-dropdown { display: none; position: absolute; top: calc(100% + 12px); right: 0; background-color: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); width: 180px; padding: 8px; animation: modalOpen 0.2s; }
+        #profile-dropdown.active { display: block; }
+        #profile-dropdown .btn { width: 100%; justify-content: flex-start; }
+        .btn { padding: 10px 18px; border: 1px solid transparent; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.2s var(--ease-cubic); display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+        .btn-primary { background-color: var(--color-primary); color: white; box-shadow: var(--shadow-md); }
+        .btn-secondary { background-color: var(--color-surface); border-color: var(--color-border); color: var(--color-text-primary); box-shadow: var(--shadow-sm); }
+        .btn-success { background-color: var(--color-success); color: white; }
+        .btn-danger { background-color: var(--color-danger); color: white; }
+        .card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-sm); }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--color-text-secondary); font-size: 0.9rem; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background-color: var(--color-background); color: var(--color-text-primary); }
+        .modal { display: none; position: fixed; z-index: 1000; inset: 0; background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(5px); }
+        .modal-content { background-color: var(--color-surface); margin: 5rem auto; padding: 32px; border-radius: var(--radius-lg); width: 90%; max-width: 500px; position: relative; box-shadow: var(--shadow-lg); animation: modalOpen 0.4s var(--ease-cubic); }
+        .close-btn { position: absolute; top: 12px; right: 12px; font-size: 24px; color: var(--color-text-secondary); background: transparent; border: none; cursor: pointer; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--color-border); cursor: pointer; }
+        .pending-user { display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid var(--color-border); }
+        #admin-approval-list .pending-user:last-child, #unlinked-employees-list .pending-user:last-child { border-bottom: none; }
+        .pending-user-info { display: flex; align-items: center; gap: 12px; }
+        .pending-user-avatar { width: 40px; height: 40px; border-radius: 50%; }
+        .pending-user-name { font-weight: 500; }
+        .pending-user-email { font-size: 0.8rem; color: var(--color-text-secondary); }
+        .pending-user-actions { display: flex; gap: 8px; }
+        #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(4px); }
+        .spinner { width: 48px; height: 48px; border: 5px solid var(--color-primary-light); border-bottom-color: var(--color-primary); border-radius: 50%; animation: rotation 1s linear infinite; }
+        #toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); padding: 15px 25px; border-radius: var(--radius-md); color: white; font-weight: 500; box-shadow: var(--shadow-lg); transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); z-index: 1001; }
+        #toast.show { bottom: 30px; }
+        #toast.success { background-color: var(--color-primary); } #toast.error { background-color: var(--color-danger); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes modalOpen { from { opacity: 0; transform: translateY(-30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .card-content { margin-bottom: 16px; }
+        .card .title { color: var(--color-text-primary); font-size: 24px; font-weight: 700; line-height: 1.2; margin-bottom: 8px;}
+        .card .description { font-size: 15px; color: var(--color-text-secondary); line-height: 1.5; }
+        @media (max-width: 768px) { .container { padding: 0 16px; } main { padding: 24px 0; } .card { padding: 16px; } .pending-user { flex-direction: column; align-items: flex-start; gap: 1rem; } .pending-user-actions { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;} #unlinked-employees-list .pending-user-actions { grid-template-columns: 1fr; } .card .title { font-size: 22px; } }
+    </style>
+</head>
+<body>
+    <div id="app-container" class="app-container">
+        <header id="app-header" class="app-header"></header>
+        <main>
+            <div class="container" id="main-container">
+                <a href="admin-dashboard.html" class="btn btn-secondary" style="margin-bottom: 24px;">
+                    <svg class="icon-sm" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" /></svg>
+                    Back to Dashboard
+                </a>
+                <div id="notifications-view" class="view active">
+                    <!-- Notification cards will be rendered here -->
+                </div>
+            </div>
+        </main>
+    </div>
+    <div id="toast"></div>
+    <div id="loader"><div class="spinner"></div></div>
+    <div id="set-salary-modal" class="modal"></div>
+    <div id="link-user-modal" class="modal"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, getDoc, writeBatch, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+// Firebase configuration will be injected by Netlify during build
+const firebaseConfig = {
+    apiKey: "__API_KEY__",
+    authDomain: "__AUTH_DOMAIN__",
+    projectId: "__PROJECT_ID__",
+    storageBucket: "__STORAGE_BUCKET__",
+    messagingSenderId: "__MESSAGING_SENDER_ID__",
+    appId: "__APP_ID__",
+    measurementId: "__MEASUREMENT_ID__"
+};
+        
+        let db, auth, currentUserProfile;
+        const ADMIN_EMAIL = "__ADMIN_EMAIL__";
+
+        const showLoader = () => document.getElementById('loader').style.display = 'flex';
+        const hideLoader = () => document.getElementById('loader').style.display = 'none';
+        const showToast = (message, type = 'success') => { const t = document.getElementById('toast'); t.textContent = message; t.className = `show ${type}`; setTimeout(() => { t.className = t.className.replace('show', ''); }, 3000); }
+        const openModal = (id) => document.getElementById(id).style.display = 'block';
+        const closeModal = (id) => document.getElementById(id).style.display = 'none';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                renderAppShellModals();
+                bindEventListeners();
+                initializeTheme();
+                listenForAuthStateChanges();
+            } catch (error) { console.error("Initialization Failed:", error); }
+        });
+
+        function listenForAuthStateChanges() {
+            onAuthStateChanged(auth, async (user) => {
+                showLoader();
+                if (user && user.email === ADMIN_EMAIL) {
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    currentUserProfile = { id: userDoc.id, ...userDoc.data() };
+                    renderHeader();
+                    await initializeNotificationsView();
+                } else { window.location.href = 'login.html'; }
+                hideLoader();
+            });
+        }
+
+        async function initializeNotificationsView() {
+            const container = document.getElementById('notifications-view');
+            container.innerHTML = '';
+            
+            // CORRECTED LOGIC: Render each card independently
+            const hasApprovals = await renderAdminApprovalList(container);
+            const hasLinks = await renderUnlinkedEmployees(container);
+
+            if (!hasApprovals && !hasLinks) {
+                container.innerHTML = `
+                    <div class="card" style="text-align: center; padding: 48px;">
+                        <h2 class="title" style="font-size: 24px; margin-bottom: 8px;">All Clear!</h2>
+                        <p class="description">You have no pending notifications.</p>
+                    </div>`;
+            }
+        }
+
+        async function renderAdminApprovalList(container) {
+            const q = query(collection(db, "users"), where("status", "==", "pending"));
+            const querySnapshot = await getDocs(q);
+            if (querySnapshot.empty) { return false; }
+
+            const card = document.createElement('div');
+            card.className = 'card';
+            const users = querySnapshot.docs.map(d => ({id: d.id, ...d.data()}));
+            card.innerHTML = `
+                <div class="card-content">
+                    <h2 class="title">User Approvals</h2>
+                    <p class="description">New users who have signed in and need to be accepted, denied, or linked.</p>
+                </div>
+                <div id="admin-approval-list">${users.map(user => `<div class="pending-user"><div class="pending-user-info"><img src="${user.photoURL}" alt="${user.displayName}" class="pending-user-avatar"><div><div class="pending-user-name">${user.displayName}</div><div class="pending-user-email">${user.email}</div></div></div><div class="pending-user-actions"><button class="btn btn-success" data-app-action="accept-user" data-uid="${user.id}" data-name="${user.displayName}">Accept as New</button><button class="btn btn-danger" data-app-action="deny-user" data-uid="${user.id}">Deny</button></div></div>`).join('')}</div>`;
+            container.appendChild(card);
+            return true;
+        }
+        
+        async function renderUnlinkedEmployees(container) {
+            const employeesSnap = await getDocs(query(collection(db, "employees"), where("userUID", "==", null)));
+            
+            // CORRECTED LOGIC: This function now only depends on whether unlinked employees exist.
+            if (employeesSnap.empty) { return false; }
+
+            const card = document.createElement('div');
+            card.className = 'card';
+            const unlinkedEmployees = employeesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+            card.innerHTML = `
+                <div class="card-content">
+                    <h2 class="title">Link Existing Employees</h2>
+                    <p class="description">Connect an existing employee record to one of the new users awaiting approval.</p>
+                </div>
+                <div id="unlinked-employees-list">${unlinkedEmployees.map(emp => `<div class="pending-user"><div class="pending-user-info"><div><div class="pending-user-name">${emp.name}</div><div class="pending-user-email">Daily Salary: ₹${emp.dailySalary}</div></div></div><div class="pending-user-actions"><button class="btn btn-primary" data-app-action="link-user" data-employee-id="${emp.id}" data-employee-name="${emp.name}">Link to Google User</button></div></div>`).join('')}</div>`;
+            container.appendChild(card);
+            return true;
+        }
+
+        // --- All original functions are included below for full functionality ---
+        function renderHeader() {
+            const header = document.getElementById('app-header');
+            header.innerHTML = `<div class="nav-left"><a href="admin-dashboard.html" style="font-family: var(--font-main); font-size: 1.2rem; font-weight: 600; text-decoration: none; color: var(--color-text-primary);">PayrollPro</a></div><div class="nav-right"><div class="profile-menu"><img src="${currentUserProfile.photoURL}" alt="User Profile" class="user-avatar" data-app-action="toggle-profile-dropdown"><div id="profile-dropdown"><button class="btn btn-secondary" data-app-action="logout"><svg class="icon-sm" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd" /></svg>Logout</button></div></div></div>`;
+        }
+        function bindEventListeners() {
+            document.body.addEventListener('click', async (e) => {
+                const appAction = e.target.closest('[data-app-action]');
+                if (!appAction?.dataset?.appAction) { if (!e.target.closest('.profile-menu')) toggleProfileDropdown(false); return; }
+                if (appAction.tagName !== 'A' || !appAction.href) e.preventDefault();
+                const action = appAction.dataset.appAction;
+                switch(action) {
+                    case 'logout': await signOut(auth); break;
+                    case 'toggle-profile-dropdown': toggleProfileDropdown(); break;
+                    case 'accept-user': handleAcceptUserClick(appAction.dataset.uid, appAction.dataset.name); break;
+                    case 'deny-user': await handleDenyUser(appAction.dataset.uid); break;
+                    case 'link-user': await handleLinkUserClick(appAction.dataset.employeeId, appAction.dataset.employeeName); break;
+                    case 'close-modal': closeModal(appAction.dataset.modalId); break;
+                }
+                if (action !== 'toggle-profile-dropdown') toggleProfileDropdown(false);
+            });
+            document.getElementById('set-salary-form').addEventListener('submit', handleSetSalarySubmit);
+        }
+        function toggleProfileDropdown(show) { const dropdown = document.getElementById('profile-dropdown'); if (show === undefined) { dropdown.classList.toggle('active'); } else { dropdown.classList.toggle('active', show); } }
+        function initializeTheme() { const theme = localStorage.getItem('theme') || 'light'; document.documentElement.setAttribute('data-theme', theme); }
+        function renderAppShellModals() {
+            document.getElementById('set-salary-modal').innerHTML = `<div class="modal-content"><span class="close-btn" data-app-action="close-modal" data-modal-id="set-salary-modal">×</span><h2>Set Salary for <strong id="new-employee-name-modal"></strong></h2><form id="set-salary-form"><input type="hidden" id="new-employee-uid"><div class="form-group"><label for="new-employee-daily-salary">Daily Salary (INR)</label><input type="number" id="new-employee-daily-salary" required min="0" step="1"></div><button type="submit" class="btn btn-primary" style="width:100%">Confirm & Accept</button></form></div>`;
+            document.getElementById('link-user-modal').innerHTML = `<div class="modal-content"></div>`;
+        }
+        function handleAcceptUserClick(uid, name) { document.getElementById('new-employee-name-modal').textContent = name; document.getElementById('new-employee-uid').value = uid; document.getElementById('set-salary-form').reset(); openModal('set-salary-modal'); }
+        async function handleDenyUser(uid) { if (!confirm("Are you sure you want to deny this user? This cannot be undone.")) return; showLoader(); try { await setDoc(doc(db, "users", uid), { status: 'denied' }, { merge: true }); showToast("User has been denied.", "success"); await initializeNotificationsView(); } catch (e) { showToast("Could not deny user.", "error"); } finally { hideLoader(); } }
+        async function handleSetSalarySubmit(e) { e.preventDefault(); showLoader(); const uid = document.getElementById('new-employee-uid').value; const name = document.getElementById('new-employee-name-modal').textContent; const dailySalary = parseFloat(document.getElementById('new-employee-daily-salary').value); try { const employeeDocRef = await addDoc(collection(db, "employees"), { name, dailySalary, userUID: uid }); await setDoc(doc(db, "users", uid), { status: 'approved', role: 'employee', employeeId: employeeDocRef.id }, { merge: true }); showToast(`${name} is now an employee!`, "success"); closeModal('set-salary-modal'); await initializeNotificationsView(); } catch (err) { showToast("Could not accept user.", "error"); } finally { hideLoader(); } }
+        async function handleLinkUserClick(employeeId, employeeName) {
+            const modal = document.getElementById('link-user-modal'); showLoader();
+            try {
+                const usersQuery = query(collection(db, "users"), where("status", "==", "pending"));
+                const pendingUsersSnap = await getDocs(usersQuery);
+                if (pendingUsersSnap.empty) { showToast("No pending users are available to link.", "error"); return; }
+                const availableUsers = pendingUsersSnap.docs.map(d => ({id: d.id, ...d.data()}));
+                const userOptions = availableUsers.map(user => `<option value="${user.id}">${user.displayName} (${user.email})</option>`).join('');
+                modal.innerHTML = `<div class="modal-content"><span class="close-btn" data-app-action="close-modal" data-modal-id="link-user-modal">×</span><h2>Link Account for <strong>${employeeName}</strong></h2><form id="link-user-form"><input type="hidden" id="link-employee-id" value="${employeeId}"><div class="form-group"><label for="link-user-select">Select the Google User to Link</label><select id="link-user-select" required><option value="">-- Select a Pending User --</option>${userOptions}</select></div><button type="submit" class="btn btn-primary" style="width:100%">Confirm & Link Account</button></form></div>`;
+                document.getElementById('link-user-form').addEventListener('submit', handleLinkUserFormSubmit);
+                openModal('link-user-modal');
+            } catch (err) { showToast("Could not load pending users.", "error"); console.error(err); } finally { hideLoader(); }
+        }
+        async function handleLinkUserFormSubmit(e) {
+            e.preventDefault();
+            const employeeId = document.getElementById('link-employee-id').value;
+            const userUID = document.getElementById('link-user-select').value;
+            if (!employeeId || !userUID) { showToast("Please select a user to link.", "error"); return; }
+            showLoader();
+            try {
+                const batch = writeBatch(db);
+                batch.update(doc(db, "employees", employeeId), { userUID: userUID });
+                batch.update(doc(db, "users", userUID), { status: 'approved', role: 'employee', employeeId: employeeId });
+                await batch.commit();
+                showToast("Account linked successfully!", "success");
+                closeModal('link-user-modal');
+                await initializeNotificationsView();
+            } catch (err) { console.error("Error linking account:", err); showToast("Failed to link account.", "error"); } finally { hideLoader(); }
+        }
+    </script>
+</body>
+</html>

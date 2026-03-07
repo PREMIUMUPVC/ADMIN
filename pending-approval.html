@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayrollPro - Pending Approval</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- 1. DESIGN SYSTEM --- */
+        :root {
+            --font-main: 'Inter', sans-serif;
+            --ease-cubic: cubic-bezier(0.4, 0, 0.2, 1);
+            --radius-sm: 4px; --radius-md: 8px; --radius-lg: 16px;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-focus-ring: 0 0 0 3px;
+        }
+
+        /* [THEME] Light Mode Palette */
+        [data-theme="light"] {
+            --color-primary: #4f46e5; --color-primary-light: #e0e7ff; --color-primary-dark: #3730a3;
+            --color-secondary: #475569; --color-background: #f8fafc;
+            --color-surface: #ffffff; --color-text-primary: #1f2937;
+            --color-text-secondary: #64748b; --color-border: #e5e7eb;
+            --color-success: #16a34a; --color-danger: #dc2626; --color-warning: #f59e0b;
+        }
+
+        /* [THEME] Dark Mode Palette */
+        [data-theme="dark"] {
+            --color-primary: #818cf8; --color-primary-light: rgba(129, 140, 248, 0.16); --color-primary-dark: #a7affb;
+            --color-secondary: #94a3b8; --color-background: #0f172a;
+            --color-surface: #1e293b; --color-text-primary: #f1f5f9;
+            --color-text-secondary: #94a3b8; --color-border: #334155;
+            --color-success: #4ade80; --color-danger: #f87171; --color-warning: #facc15;
+        }
+
+        /* --- 2. GLOBAL RESETS & BASE STYLES --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-main); background-color: var(--color-background);
+            color: var(--color-text-primary); line-height: 1.5;
+            transition: background-color 0.3s var(--ease-cubic), color 0.3s var(--ease-cubic);
+            -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+        }
+        .view { display: none; }
+        .view.active { display: block; animation: fadeIn 0.5s var(--ease-cubic); }
+
+        /* --- 4. COMPONENT LIBRARY --- */
+        .btn { padding: 10px 18px; border: 1px solid transparent; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.2s var(--ease-cubic); display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+        .btn:focus-visible { outline: var(--shadow-focus-ring) var(--color-primary-light); }
+        .btn:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.05); }
+        .btn-secondary { background-color: var(--color-surface); border-color: var(--color-border); color: var(--color-text-primary); box-shadow: var(--shadow-sm); }
+        .btn-secondary:hover:not(:disabled) { border-color: var(--color-primary); color: var(--color-primary); background-color: var(--color-primary-light); }
+
+        /* --- 5. VIEW-SPECIFIC STYLES --- */
+        .full-page-center { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; text-align: center; padding: 2rem; }
+        .status-icon { font-size: 4rem; margin-bottom: 1rem; }
+        .status-view-content h2 { font-size: 1.75rem; color: var(--color-text-primary); margin-bottom: 1rem; }
+        .status-view-content p { color: var(--color-text-secondary); margin-bottom: 2rem; max-width: 450px; }
+
+        /* --- 6. UTILITIES & FEEDBACK --- */
+        #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(4px); }
+        .spinner { width: 48px; height: 48px; border: 5px solid var(--color-primary-light); border-bottom-color: var(--color-primary); border-radius: 50%; animation: rotation 1s linear infinite; }
+        #toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); padding: 15px 25px; border-radius: var(--radius-md); color: white; font-weight: 500; box-shadow: var(--shadow-lg); transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); z-index: 1001; }
+        #toast.show { bottom: 30px; }
+        #toast.success { background-color: var(--color-primary); }
+
+        /* --- 7. ANIMATIONS & RESPONSIVE --- */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    
+    <div id="pending-approval-view" class="view">
+        <!-- Content will be injected by renderPendingView() -->
+    </div>
+
+    <div id="toast"></div>
+    <div id="loader"><div class="spinner"></div></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // IMPORTANT: Replace with your actual Firebase configuration
+// Firebase configuration will be injected by Netlify during build
+const firebaseConfig = {
+    apiKey: "__API_KEY__",
+    authDomain: "__AUTH_DOMAIN__",
+    projectId: "__PROJECT_ID__",
+    storageBucket: "__STORAGE_BUCKET__",
+    messagingSenderId: "__MESSAGING_SENDER_ID__",
+    appId: "__APP_ID__",
+    measurementId: "__MEASUREMENT_ID__"
+};
+        let db, auth;
+        const ADMIN_EMAIL = "__ADMIN_EMAIL__";
+
+        // --- HELPER FUNCTIONS ---
+        const showLoader = () => document.getElementById('loader').style.display = 'flex';
+        const hideLoader = () => document.getElementById('loader').style.display = 'none';
+        const showToast = (message, type = 'success') => { const t = document.getElementById('toast'); t.textContent = message; t.className = `show ${type}`; setTimeout(() => { t.className = t.className.replace('show', ''); }, 3000); }
+
+        function showView(viewId) {
+            document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+            const viewElement = document.getElementById(viewId);
+            if (viewElement) {
+                viewElement.style.display = 'block';
+                viewElement.classList.add('active');
+            }
+        }
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                if (!firebaseConfig.apiKey || firebaseConfig.projectId === "your-project-id") {
+                    throw new Error("Firebase config is not set.");
+                }
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                renderPendingView();
+                bindEventListeners();
+                listenForAuthStateChanges();
+            } catch (error) {
+                console.error("Initialization Failed:", error);
+                document.body.innerHTML = `<div class="full-page-center"><h2>Error initializing application.</h2></div>`;
+            }
+        });
+
+        // --- AUTHENTICATION FLOW ---
+        function listenForAuthStateChanges() {
+            onAuthStateChanged(auth, async (user) => {
+                showLoader();
+                if (user) {
+                    // A user is logged in, check their status
+                    const userRef = doc(db, "users", user.uid);
+                    const userDoc = await getDoc(userRef);
+
+                    if (userDoc.exists()) {
+                        const userProfile = userDoc.data();
+                        
+                        // If user is admin, redirect them immediately.
+                        if (userProfile.email === ADMIN_EMAIL) {
+                            window.location.href = 'admin-dashboard.html';
+                            return;
+                        }
+
+                        // Check the user's status and redirect if it's not 'pending'
+                        switch (userProfile.status) {
+                            case 'approved':
+                                window.location.href = 'employee-dashboard.html';
+                                break;
+                            case 'denied':
+                                window.location.href = 'access-denied.html';
+                                break;
+                            case 'pending':
+                            default:
+                                // Status is pending, stay on this page
+                                showView('pending-approval-view');
+                                hideLoader();
+                                break;
+                        }
+                    } else {
+                        // User exists in Auth but not in Firestore database. This is an edge case.
+                        // Redirect to login to re-trigger the profile creation flow.
+                        window.location.href = 'login.html';
+                    }
+                } else {
+                    // No user is logged in, redirect to the login page.
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+        
+        async function handleLogout() { 
+            showLoader(); 
+            await signOut(auth);
+            showToast("You have been logged out.");
+            // The onAuthStateChanged listener will handle the redirect to login.html
+        }
+
+        // --- UI RENDERING & EVENT BINDING ---
+        function renderPendingView() {
+            const container = document.getElementById('pending-approval-view');
+            container.innerHTML = `
+                <div class="full-page-center">
+                    <div class="status-view-content">
+                        <div class="status-icon">⏳</div>
+                        <h2>Awaiting Admin Approval</h2>
+                        <p>Your account has been created successfully. An administrator needs to approve your access before you can continue. Please check back later.</p>
+                        <button data-app-action="logout" class="btn btn-secondary">Logout</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function bindEventListeners() {
+            document.body.addEventListener('click', async (e) => {
+                const target = e.target;
+                const appAction = target.closest('[data-app-action]');
+
+                if (appAction?.dataset?.appAction === 'logout') {
+                    e.preventDefault();
+                    await handleLogout();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

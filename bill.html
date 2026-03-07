@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayrollPro - Invoice</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <style>
+        /* --- EXACT CSS FROM YOUR EXAMPLE --- */
+        :root{--font-main:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;--light-bg-secondary:#e9e9e9;--light-border:#e2e8f0;--color-primary:#012726;--color-primary-hover:#023d3c;--color-primary-text:#fff;--shadow-md:0 4px 6px -1px rgba(0,0,0,.07),0 2px 4px -2px rgba(0,0,0,.07);--ease:cubic-bezier(.4,0,.2,1);--radius-md:.5rem;--color-focus-ring:rgba(51,195,117,.35);--shadow-sm:0 1px 2px 0 rgba(0,0,0,.04)}*,:after,:before{box-sizing:border-box}html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}body{font-family:var(--font-main);background-color:var(--light-bg-secondary);color:#2d3748;margin:0;padding:2rem}.invoice-box{width:100%;max-width:900px;margin:auto;background:#fff;border-radius:6px;display:flex;flex-direction:column;padding:30px}.header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--light-border);padding-bottom:20px}.logo-img{max-width:160px;height:auto}.invoice-details{text-align:right;font-size:13px;line-height:1.5;color:#718096}.invoice-details h2{font-size:1.5rem;line-height:2rem;margin:0 0 10px 0;color:#718096;font-weight:600;text-transform:uppercase}.invoice-details strong{color:#2d3748}.customer-info{margin-top:25px;display:flex;justify-content:space-between;gap:2rem}.customer-info .address-block{width:50%}.customer-info h3{font-weight:600;font-size:16px;margin-bottom:8px}.customer-info p{font-size:13px;color:#718096;margin:3px 0;line-height:1.6}.customer-info p strong{color:#2d3748}.items-table{width:100%;margin-top:25px;border-collapse:collapse;font-size:13px}.items-table thead th{background-color:#535456;color:#fff;font-weight:600;padding:12px 8px;text-align:left;border-bottom:none}.items-table tbody td{padding:10px 8px;border-bottom:1px solid var(--light-border);color:#718096}.items-table tbody .item-name{color:#2d3748;font-weight:500}.items-table tbody tr:nth-child(even){background-color:#f8f8f7}.items-table td:not(:first-child):not(:nth-child(2)),.items-table th:not(:first-child):not(:nth-child(2)){text-align:right}.summary-section{margin-top:20px;padding-top:20px;display:flex;justify-content:space-between;align-items:flex-start;gap:2rem;border-top:1px solid var(--light-border)}.summary-notes{width:55%;font-size:11px;color:#888;line-height:1.5}.summary-notes strong{color:#718096;font-weight:600;font-size:12px;display:block;margin-bottom:5px}.summary-totals{width:45%}.summary-totals table{width:100%;font-size:14px;border-collapse:collapse}.summary-totals table td{border-bottom:1px solid var(--light-border);padding:8px}.summary-totals table tr:last-child{font-weight:700;font-size:18px;color:#2d3748}.summary-totals table tr:last-child td{background-color:#f7fafc;border-bottom:none;padding:12px 8px}.footer{margin-top:20px;padding-top:20px;border-top:1px solid var(--light-border);display:flex;justify-content:space-between;align-items:flex-end;font-size:12px;color:#718096}.signature{text-align:right}.signature .signature-space{height:40px}.signature .signature-line{width:220px;border-top:1px solid #718096;margin-top:5px;margin-bottom:5px}.signature p{margin:0;font-weight:600;color:#2d3748}.signature .signatory-title{font-size:11px;font-weight:normal}
+        #bill-controls{display:flex;justify-content:center;align-items:center;gap:1rem;margin-bottom:20px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.75rem 1.25rem;border-radius:var(--radius-md);font-weight:600;font-size:.875rem;transition:all .2s var(--ease);border:1px solid transparent;cursor:pointer}.btn-primary{background-color:var(--color-primary);color:#fff;box-shadow:var(--shadow-md);}.btn-primary:hover{background-color:#023d3c; transform: translateY(-1px);}.btn-secondary{background-color:#fff;color:#52616b;border-color:var(--light-border);box-shadow:var(--shadow-sm);}.btn-secondary:hover{background-color:#f1f3f6; transform: translateY(-1px);}.modal{display:none;position:fixed;z-index:1000;inset:0;width:100%;height:100%;background-color:rgba(17,24,39,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center}@keyframes popIn{0%{opacity:0;transform:scale(.9)}100%{opacity:1;transform:scale(1)}}.modal-content{background-color:#fff;padding:2rem;border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);width:90%;max-width:520px;animation:popIn .3s var(--ease)}.form-group{margin-bottom:1.5rem}.input-group{position:relative}.input-field{width:100%;background-color:#fff;border:1px solid var(--light-border);border-radius:var(--radius-md);font-size:1rem;padding:1rem;color:#012726;transition:all .2s;outline:none}.input-label{position:absolute;top:1rem;left:1rem;color:#52616b;pointer-events:none;transition:all .2s var(--ease);background-color:#fff;padding:0 .25rem}.input-field:focus+.input-label,.input-field:not(:placeholder-shown)+.input-label{top:-.625rem;font-size:.75rem;color:var(--color-primary)}.input-field:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px var(--color-focus-ring)}.modal-buttons{display:flex;justify-content:flex-end;gap:1rem;margin-top:2rem}.loading-overlay{position:fixed;inset:0;width:100%;height:100%;background-color:rgba(255,255,255,.9);z-index:1001;display:flex;align-items:center;justify-content:center}.spinner{border:6px solid #f1f3f6;border-top:6px solid var(--color-primary);border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite}@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+        .checkbox-group { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+        .address-textarea { display: none; width: 100%; min-height: 80px; resize: vertical; margin-top: 8px; }
+        @media (max-width:640px){body{padding:0}.invoice-box{padding:15px;min-height:unset;border-radius:0;box-shadow:none}.header{padding-bottom:10px}.logo-img{max-width:100px}.invoice-details{font-size:10px}.invoice-details h2{font-size:1rem;margin-bottom:5px}.customer-info{margin-top:15px;gap:1rem;flex-direction:column}.customer-info .address-block{width:100%}.customer-info h3{font-size:12px}.customer-info p{font-size:10px;line-height:1.4}.items-table{font-size:10px;margin-top:15px}.items-table thead th,.items-table tbody td{padding:5px 4px}.summary-section{margin-top:15px;padding-top:15px;gap:1rem;flex-direction:column}.summary-notes,.summary-totals{width:100%}.summary-notes{font-size:8px;line-height:1.4}.summary-notes strong{font-size:10px}.summary-totals table{font-size:10px}.summary-totals table tr:last-child{font-size:12px}.summary-totals table td{padding:5px 4px}.footer{margin-top:15px;padding-top:15px;font-size:8px}.signature .signature-space{height:25px}.signature .signature-line{width:150px}.signature p{font-size:10px}.signature .signatory-title{font-size:9px}}
+        @media print{@page{size:A4;margin:0}body{padding:0!important;background:#fff!important}#bill-controls,.modal,.loading-overlay{display:none!important}.invoice-box{margin:0!important;max-width:100%!important;border-radius:0!important;box-shadow:none!important;padding:10mm!important}.items-table thead th{background-color:#535456!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.items-table tbody tr:nth-child(even){background-color:#f8f8f7!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+    </style>
+</head>
+<body>
+
+    <div id="bill-container"></div>
+
+    <div id="bill-details-modal" class="modal">
+        <div class="modal-content">
+             <form id="bill-details-form">
+                <h3 style="margin-bottom: 2rem;">Enter Bill Details</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div class="input-group"><input type="text" id="invoice-number" class="input-field" placeholder=" " required><label for="invoice-number" class="input-label">Invoice No.</label></div>
+                    <div class="input-group"><input type="date" id="invoice-date" class="input-field" placeholder=" " required><label for="invoice-date" class="input-label">Invoice Date</label></div>
+                </div>
+                <div class="form-group" style="margin-top: 1.5rem;"><label for="price-per-sft">Price per SFT (₹)</label><input type="number" id="price-per-sft" class="input-field" min="0" step="0.01" required></div>
+                <div class="form-group"><label for="freight-charges">Freight / Transport Charges (₹)</label><input type="number" id="freight-charges" class="input-field" min="0" step="1" value="0" required></div>
+                <hr style="border: 0; height: 1px; background-color: var(--light-border); margin: 2rem 0;">
+                <div class="checkbox-group"><input type="checkbox" id="add-billing-address" style="width: 1.15em; height: 1.15em;"><label for="add-billing-address">Add a different Billing Address</label></div>
+                <textarea id="billing-address-textarea" class="input-field address-textarea" placeholder="Enter new billing address..."></textarea>
+                <div class="checkbox-group" style="margin-top: 1rem;"><input type="checkbox" id="add-shipping-address" style="width: 1.15em; height: 1.15em;"><label for="add-shipping-address">Add a different Shipping Address</label></div>
+                <textarea id="shipping-address-textarea" class="input-field address-textarea" placeholder="Enter new shipping address..."></textarea>
+                <div class="modal-buttons">
+                    <button type="button" id="bill-cancel-btn" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Generate Bill</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="loading-overlay" class="loading-overlay" style="display: none;"><div class="spinner"></div></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const billContainer = document.getElementById('bill-container');
+        const detailsModal = document.getElementById('bill-details-modal');
+        const detailsForm = document.getElementById('bill-details-form');
+        const cancelBtn = document.getElementById('bill-cancel-btn');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const addBillingAddressCheck = document.getElementById('add-billing-address');
+        const billingAddressTextarea = document.getElementById('billing-address-textarea');
+        const addShippingAddressCheck = document.getElementById('add-shipping-address');
+        const shippingAddressTextarea = document.getElementById('shipping-address-textarea');
+        let db, auth;
+
+        function numberToWords(num) { const a = ['','one ','two ','three ','four ', 'five ','six ','seven ','eight ','nine ','ten ','eleven ','twelve ','thirteen ','fourteen ','fifteen ','sixteen ','seventeen ','eighteen ','nineteen ']; const b = ['', '', 'twenty','thirty','forty','fifty', 'sixty','seventy','eighty','ninety']; if ((num = num.toString()).length > 9) return 'overflow'; const n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/); if (!n) return; var str = ''; str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'crore ' : ''; str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'lakh ' : ''; str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'thousand ' : ''; str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'hundred ' : ''; str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) : ''; return str.trim().replace(/\s+/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '); }
+
+        const createBillHtml = (order, details) => {
+            let windows = [];
+            try { windows = JSON.parse(order.windows || '[]'); } catch(e) { console.error("Could not parse window data", e); }
+            
+            const itemGroups = {};
+            windows.forEach(win => {
+                const itemName = win.itemType ? (win.itemType.charAt(0).toUpperCase() + win.itemType.slice(1)) : 'Item';
+                if (!itemGroups[itemName]) { itemGroups[itemName] = { qty: 0, totalSft: 0 }; }
+                itemGroups[itemName].qty += 1;
+                const heightMm = parseFloat(win.height || 0);
+                const widthMm = parseFloat(win.width || 0);
+                itemGroups[itemName].totalSft += (widthMm / 304) * (heightMm / 304);
+            });
+
+            let tableRows = '';
+            let subTotal = 0;
+            let itemIndex = 1;
+            for (const itemName in itemGroups) {
+                const group = itemGroups[itemName];
+                const itemCost = group.totalSft * details.pricePerSft; // Use full precision for calculation
+                subTotal += itemCost;
+                tableRows += `<tr><td>${itemIndex++}</td><td class="item-name">${itemName}</td><td>3952</td><td>${group.qty}</td><td>${group.totalSft.toFixed(2)}</td><td>${details.pricePerSft.toLocaleString('en-IN')}</td><td>${itemCost.toLocaleString('en-IN', {maximumFractionDigits: 2})}</td></tr>`;
+            }
+            
+            const totalBeforeTax = subTotal;
+            const sgst = totalBeforeTax * 0.09;
+            const cgst = totalBeforeTax * 0.09;
+            const grandTotal = totalBeforeTax + details.freight + sgst + cgst;
+            const totalInWords = numberToWords(Math.round(grandTotal));
+
+            const formatCurrency = (num) => num.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+            return `
+                <div id="bill-controls">
+                    <button class="btn btn-secondary" onclick="window.location.href='order-details.html?id=${order.id}'"><span class="material-symbols-outlined">arrow_back</span> Back to Details</button>
+                    <button class="btn btn-primary" onclick="window.print()"><span class="material-symbols-outlined">print</span> Print / Save PDF</button>
+                </div>
+                <div class="invoice-box">
+                    <header class="header">
+                        <div class="company-details"><img src="https://ihtnas.com/assets/ihtnas-nav.png" alt="Company Logo" class="logo-img"></div>
+                        <div class="invoice-details">
+                            <h2>INVOICE</h2>
+                            <div><strong>Invoice No:</strong> ${details.invoiceNumber}</div>
+                            <div><strong>Invoice Date:</strong> ${new Date(details.invoiceDate + 'T00:00:00').toLocaleDateString('en-GB')}</div>
+                            <div><strong>GSTIN:</strong> 37ECPPK6026R1ZO</div>
+                        </div>
+                    </header>
+                    <section class="customer-info">
+                        <div class="address-block">
+                            <h3>Billed To</h3>
+                            <p><strong>${order.name}</strong><br>${details.billingAddress.replace(/\n/g, '<br>')}<br>Phone: ${order.mobileNumber || 'N/A'}</p>
+                        </div>
+                        <div class="address-block">
+                            <h3>Shipped To</h3>
+                            <p><strong>${order.name}</strong><br>${details.shippingAddress.replace(/\n/g, '<br>')}<br>Phone: ${order.mobileNumber || 'N/A'}</p>
+                        </div>
+                    </section>
+                    <table class="items-table">
+                        <thead><tr><th>SNo.</th><th>Name of the Goods / Service</th><th>HSN/SAC</th><th>Qty</th><th>Sft</th><th>Rate</th><th>Value</th></tr></thead>
+                        <tbody>${tableRows}</tbody>
+                    </table>
+                    <section class="summary-section">
+                        <div class="summary-notes">
+                            <strong>Declaration & Terms</strong>
+                            <p>Certified that the particulars given above are true and correct. GST on Reverse Charge: NA. Payment: 50% Advance, 50% Balance.</p>
+                            <strong>Total in Words</strong>
+                            <p>${totalInWords} Rupees Only.</p>
+                        </div>
+                        <div class="summary-totals">
+                            <table>
+                                <tr><td>Total Before Tax:</td><td style="text-align: right;">${formatCurrency(totalBeforeTax)}</td></tr>
+                                <tr><td>Freight:</td><td style="text-align: right;">+ ${formatCurrency(details.freight)}</td></tr>
+                                <tr><td>SGST (9%):</td><td style="text-align: right;">+ ${formatCurrency(sgst)}</td></tr>
+                                <tr><td>CGST (9%):</td><td style="text-align: right;">+ ${formatCurrency(cgst)}</td></tr>
+                                <tr><td>Grand Total:</td><td style="text-align: right;">₹ ${formatCurrency(grandTotal)}</td></tr>
+                            </table>
+                        </div>
+                    </section>
+                    <footer class="footer">
+                        <div class="contact"><span>Email: kolatapuk.k@gmail.com | Phone: 7981599155</span></div>
+                        <div class="signature"><div class="signature-space"></div><div class="signature-line"></div><p class="signatory-title">Authorised Signatory</p></div>
+                    </footer>
+                </div>`;
+        };
+
+        async function initializeFirebase() {
+            try {
+// Firebase configuration will be injected by Netlify during build
+const firebaseConfig = {
+    apiKey: "__API_KEY__",
+    authDomain: "__AUTH_DOMAIN__",
+    projectId: "__PROJECT_ID__",
+    storageBucket: "__STORAGE_BUCKET__",
+    messagingSenderId: "__MESSAGING_SENDER_ID__",
+    appId: "__APP_ID__",
+    measurementId: "__MEASUREMENT_ID__"
+};
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                onAuthStateChanged(auth, user => {
+                    if (user) { startPageLogic(); } 
+                    else { window.location.href = 'login.html'; }
+                });
+            } catch (error) { console.error("Firebase Init Error:", error); }
+        }
+
+        function startPageLogic() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('id');
+            if (orderId) {
+                detailsForm.dataset.id = orderId;
+                document.getElementById('invoice-date').value = new Date().toISOString().split('T')[0];
+                detailsModal.style.display = 'flex';
+                document.getElementById('invoice-number').focus();
+            } else {
+                alert("No order specified. Redirecting...");
+                window.location.href = 'view-orders.html';
+            }
+        }
+        
+        detailsForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            loadingOverlay.style.display = 'flex';
+            const orderId = e.currentTarget.dataset.id;
+            
+            try {
+                const orderSnap = await getDoc(doc(db, 'upvc_orders', orderId));
+                if (orderSnap.exists()) {
+                    const order = { id: orderSnap.id, ...orderSnap.data() };
+                    const billDetails = {
+                        invoiceNumber: document.getElementById('invoice-number').value,
+                        invoiceDate: document.getElementById('invoice-date').value,
+                        pricePerSft: parseFloat(document.getElementById('price-per-sft').value),
+                        freight: parseFloat(document.getElementById('freight-charges').value || 0),
+                        billingAddress: addBillingAddressCheck.checked ? billingAddressTextarea.value : order.address,
+                        shippingAddress: addShippingAddressCheck.checked ? shippingAddressTextarea.value : order.address
+                    };
+                    billContainer.innerHTML = createBillHtml(order, billDetails);
+                    detailsModal.style.display = 'none';
+                } else { alert("Order not found."); }
+            } catch (error) { console.error("Error generating bill:", error); alert("Could not generate bill."); } 
+            finally { loadingOverlay.style.display = 'none'; }
+        });
+        
+        cancelBtn.addEventListener('click', () => {
+            const orderId = detailsForm.dataset.id;
+            window.location.href = `order-details.html?id=${orderId}`;
+        });
+        addBillingAddressCheck.addEventListener('change', () => { billingAddressTextarea.style.display = addBillingAddressCheck.checked ? 'block' : 'none'; });
+        addShippingAddressCheck.addEventListener('change', () => { shippingAddressTextarea.style.display = addShippingAddressCheck.checked ? 'block' : 'none'; });
+
+        initializeFirebase();
+    </script>
+</body>
+</html>

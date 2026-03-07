@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayrollPro</title>
+    <style>
+        /* Minimal, embedded CSS for maximum loading speed */
+        :root {
+            --primary-dark: #042626; /* Your requested dark color */
+            --accent-green: #33C375; /* A vibrant accent for the spinner */
+        }
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            background-color: var(--primary-dark);
+            /* A subtle fade-in for the entire page for a smoother entry */
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .loading-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            /* The "comet" effect: a transparent border with a colored top segment */
+            border: 5px solid transparent;
+            border-top-color: var(--accent-green);
+            /* A smoother, more professional animation curve */
+            animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .error-message {
+            font-family: sans-serif;
+            color: #f7f9fc;
+            text-align: center;
+            padding: 2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loading-container">
+        <div class="spinner"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // This configuration MUST match all other pages in your project
+       const firebaseConfig = {
+    apiKey: "__API_KEY__",
+    authDomain: "__AUTH_DOMAIN__",
+    projectId: "__PROJECT_ID__",
+    storageBucket: "__STORAGE_BUCKET__",
+    messagingSenderId: "__MESSAGING_SENDER_ID__",
+    appId: "__APP_ID__",
+    measurementId: "__MEASUREMENT_ID__"
+};
+
+        const ADMIN_EMAIL = "__ADMIN_EMAIL__";
+
+        async function routeUser() {
+            try {
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                const db = getFirestore(app);
+
+                // This listener is highly optimized. It fires once and gives the auth state.
+                onAuthStateChanged(auth, async (user) => {
+                    if (!user) {
+                        // Case 1: No user is logged in. Redirect to the login page.
+                        // window.location.replace prevents this page from appearing in browser history.
+                        window.location.replace('login.html');
+                        return;
+                    }
+
+                    // Case 2: A user is logged in. Check for the admin fast-path.
+                    if (user.email === ADMIN_EMAIL) {
+                        window.location.replace('admin-dashboard.html');
+                        return;
+                    }
+                    
+                    // Case 3: A non-admin user is logged in. Fetch their profile from Firestore.
+                    try {
+                        const userDocRef = doc(db, "users", user.uid);
+                        const userDoc = await getDoc(userDocRef);
+
+                        if (userDoc.exists()) {
+                            const userProfile = userDoc.data();
+                            // Redirect based on their approval status.
+                            switch (userProfile.status) {
+                                case 'approved':
+                                    window.location.replace('employee-dashboard.html');
+                                    break;
+                                case 'denied':
+                                    window.location.replace('access-denied.html');
+                                    break;
+                                case 'pending':
+                                default:
+                                    window.location.replace('pending-approval.html');
+                                    break;
+                            }
+                        } else {
+                            // This is an edge case where a user exists in Firebase Auth but
+                            // their document was deleted from Firestore. Sending them to login
+                            // will re-trigger the document creation flow.
+                            window.location.replace('login.html');
+                        }
+                    } catch (error) {
+                        console.error("Error fetching user profile:", error);
+                        // If the database is unreachable, it's safest to send them back to login.
+                        window.location.replace('login.html');
+                    }
+                });
+            } catch (error) {
+                console.error("Firebase initialization failed:", error);
+                document.body.innerHTML = `<div class="loading-container"><p class="error-message">Could not connect to the application. Please check your network connection and try again.</p></div>`;
+            }
+        }
+
+        // Run the routing logic immediately.
+        routeUser();
+    </script>
+
+</body>
+</html>
