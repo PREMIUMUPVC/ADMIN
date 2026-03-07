@@ -1,4 +1,5 @@
 {
   "buildCommand": "bash replace-env.sh",
+  "outputDirectory": ".",
   "cleanUrls": true
 }
