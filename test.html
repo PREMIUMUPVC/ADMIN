@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayrollPro - Quotation</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <style>
+        /* --- EXACT UNIFIED CSS --- */
+        :root{--font-main:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;--light-bg-secondary:#e9e9e9;--light-border:#e2e8f0;--color-primary:#012726;--color-primary-hover:#023d3c;--color-primary-text:#fff;--shadow-md:0 4px 6px -1px rgba(0,0,0,.07),0 2px 4px -2px rgba(0,0,0,.07);--ease:cubic-bezier(.4,0,.2,1);--radius-md:.5rem;--radius-lg:1rem;--color-focus-ring:rgba(51,195,117,.35);--shadow-sm:0 1px 2px 0 rgba(0,0,0,.04)}*,:after,:before{box-sizing:border-box}html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}body{font-family:var(--font-main);background-color:var(--light-bg-secondary);color:#2d3748;margin:0;padding:2rem}.invoice-box{width:100%;max-width:900px;margin:auto;background:#fff;border-radius:6px;display:flex;flex-direction:column;padding:30px; box-shadow: var(--shadow-sm);}.header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--light-border);padding-bottom:20px}.logo-img{max-width:160px;height:auto}.invoice-details{text-align:right;font-size:13px;line-height:1.5;color:#718096}.invoice-details h2{font-size:1.5rem;line-height:2rem;margin:0 0 10px 0;color:#718096;font-weight:600;text-transform:uppercase}.invoice-details strong{color:#2d3748}.customer-info{margin-top:25px;display:flex;justify-content:space-between;gap:2rem}.customer-info .address-block{width:50%}.customer-info h3{font-weight:600;font-size:16px;margin-bottom:8px}.customer-info p{font-size:13px;color:#718096;margin:3px 0;line-height:1.6}.customer-info p strong{color:#2d3748}.items-table{width:100%;margin-top:25px;border-collapse:collapse;font-size:13px}.items-table thead th{background-color:#535456;color:#fff;font-weight:600;padding:12px 8px;text-align:left;border-bottom:none}.items-table tbody td{padding:10px 8px;border-bottom:1px solid var(--light-border);color:#718096}.items-table tbody .item-name{color:#2d3748;font-weight:500}.items-table tbody tr:nth-child(even){background-color:#f8f8f7}.items-table td:not(:first-child):not(:nth-child(2)),.items-table th:not(:first-child):not(:nth-child(2)){text-align:right}.summary-section{margin-top:20px;padding-top:20px;display:flex;justify-content:space-between;align-items:flex-start;gap:2rem;border-top:1px solid var(--light-border)}.summary-notes{width:55%;font-size:11px;color:#888;line-height:1.5}.summary-notes strong{color:#718096;font-weight:600;font-size:12px;display:block;margin-bottom:5px}.summary-totals{width:45%}.summary-totals table{width:100%;font-size:14px;border-collapse:collapse}.summary-totals table td{border-bottom:1px solid var(--light-border);padding:8px}.summary-totals table tr:last-child{font-weight:700;font-size:18px;color:#2d3748}.summary-totals table tr:last-child td{background-color:#f7fafc;border-bottom:none;padding:12px 8px}.footer{margin-top:20px;padding-top:20px;border-top:1px solid var(--light-border);display:flex;justify-content:space-between;align-items:flex-end;font-size:12px;color:#718096}.signature{text-align:right}.signature .signature-space{height:60px;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-end}.signature .signature-line{width:220px;border-top:1px solid #718096;margin-top:5px;margin-bottom:5px}.signature p{margin:0;font-weight:600;color:#2d3748}.signature .signatory-title{font-size:11px;font-weight:normal}.digital-signature-img{display:none;max-height:50px;object-fit:contain;margin-bottom:2px}
+        #quote-controls{display:flex;justify-content:center;align-items:center;gap:1rem;margin-bottom:20px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.75rem 1.25rem;border-radius:var(--radius-md);font-weight:600;font-size:.875rem;transition:all .2s var(--ease);border:1px solid transparent;cursor:pointer}.btn-primary{background-color:var(--color-primary);color:#fff;box-shadow:var(--shadow-md);}.btn-primary:hover{background-color:#023d3c; transform: translateY(-1px);}.btn-secondary{background-color:#fff;color:#52616b;border-color:var(--light-border);box-shadow:var(--shadow-sm);}.btn-secondary:hover{background-color:#f1f3f6; transform: translateY(-1px);}.modal{display:none;position:fixed;z-index:1000;inset:0;width:100%;height:100%;background-color:rgba(17,24,39,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center}@keyframes popIn{0%{opacity:0;transform:scale(.9)}100%{opacity:1;transform:scale(1)}}.modal-content{background-color:#fff;padding:2rem;border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);width:90%;max-width:520px;animation:popIn .3s var(--ease)}.form-group{margin-bottom:1.5rem}.input-group{position:relative}.input-field{width:100%;background-color:#fff;border:1px solid var(--light-border);border-radius:var(--radius-md);font-size:1rem;padding:1rem;color:#012726;transition:all .2s;outline:none}.input-label{position:absolute;top:1rem;left:1rem;color:#52616b;pointer-events:none;transition:all .2s var(--ease);background-color:#fff;padding:0 .25rem}.input-field:focus+.input-label,.input-field:not(:placeholder-shown)+.input-label{top:-.625rem;font-size:.75rem;color:var(--color-primary)}.input-field:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px var(--color-focus-ring)}.modal-buttons{display:flex;justify-content:flex-end;gap:1rem;margin-top:2rem}.loading-overlay{position:fixed;inset:0;width:100%;height:100%;background-color:rgba(255,255,255,.9);z-index:1001;display:flex;align-items:center;justify-content:center}.spinner{border:6px solid #f1f3f6;border-top:6px solid var(--color-primary);border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite}@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+        .checkbox-group { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+        .address-textarea { display: none; width: 100%; min-height: 80px; resize: vertical; margin-top: 8px; }
+        
+        /* NEW: Full Page Configuration Styles */
+        .app-container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+        .card { background-color: #fff; border: 1px solid var(--light-border); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-sm); }
+        .warning-banner { background-color: #fffbeb; border: 1px solid #fde68a; color: #b45309; padding: 1rem; border-radius: var(--radius-md); display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; font-weight: 500; font-size: 0.95rem; animation: popIn 0.3s ease; }
+        .icon-btn { background: none; border: 1px solid var(--light-border); color: var(--color-primary); padding: 0.5rem; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .icon-btn:hover { background: var(--light-bg-secondary); }
+        .page-header-container { display: flex; align-items: center; margin-bottom: 1.5rem; gap: 1rem; }
+        .page-header-container h2 { font-size: 1.5rem; margin: 0; }
+
+        /* Mobile Layout Adjustment */
+        @media (max-width:640px){
+            body{padding:0}
+            .app-container { margin: 0; padding: 0; }
+            .card { padding: 1.5rem; border-radius: 0; border: none; box-shadow: none; }
+            .page-header-container { padding: 1rem; margin-bottom: 0; background: #fff; border-bottom: 1px solid var(--light-border); }
+            .warning-banner { margin: 1rem; }
+            .invoice-box{padding:15px;min-height:unset;border-radius:0;box-shadow:none}
+            .header{padding-bottom:10px}
+            .logo-img{max-width:100px}
+            .invoice-details{font-size:10px}
+            .invoice-details h2{font-size:1rem;margin-bottom:5px}
+            .customer-info{margin-top:15px;gap:1rem;flex-direction:column}
+            .customer-info .address-block{width:100%}
+            .customer-info h3{font-size:12px}
+            .customer-info p{font-size:10px;line-height:1.4}
+            .items-table{font-size:10px;margin-top:15px}
+            .items-table thead th,.items-table tbody td{padding:5px 4px}
+            .summary-section{margin-top:15px;padding-top:15px;gap:1rem;flex-direction:column}
+            .summary-notes,.summary-totals{width:100%}
+            .summary-notes{font-size:8px;line-height:1.4}
+            .summary-notes strong{font-size:10px}
+            .summary-totals table{font-size:10px}
+            .summary-totals table tr:last-child{font-size:12px}
+            .summary-totals table td{padding:5px 4px}
+            .footer{margin-top:15px;padding-top:15px;font-size:8px}
+            .signature .signature-space{height:40px}
+            .signature .signature-line{width:150px}
+            .signature p{font-size:10px}
+            .signature .signatory-title{font-size:9px}
+            .digital-signature-img{max-height:35px;}
+            
+            /* Mobile Buttons Stacking - 1 on top, 2 on bottom */
+            #quote-controls { 
+                display: grid; 
+                grid-template-columns: 1fr 1fr; 
+                gap: 0.75rem; 
+                padding: 1rem; 
+                margin-bottom: 0; 
+            }
+            #quote-controls .btn { 
+                width: 100%; 
+                justify-content: center; 
+                font-size: 0.8rem; 
+                padding: 0.6rem 0.5rem; 
+            }
+            #quote-controls .btn:first-child { 
+                grid-column: span 2; 
+                font-size: 0.875rem; 
+                padding: 0.75rem; 
+            }
+        }
+        @media print{@page{size:A4;margin:0}body{padding:0!important;background:#fff!important}#quote-controls,.modal,.loading-overlay{display:none!important}.invoice-box{margin:0!important;max-width:100%!important;border-radius:0!important;box-shadow:none!important;padding:10mm!important}.items-table thead th{background-color:#535456!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.items-table tbody tr:nth-child(even){background-color:#f8f8f7!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- Configuration Form Screen (Replaces old modal) -->
+        <div id="quote-details-screen" style="display: none; animation: fadeIn 0.3s var(--ease);">
+            <div class="page-header-container">
+                <button id="back-to-order-btn" class="icon-btn" aria-label="Back to Order"><span class="material-symbols-outlined">arrow_back</span></button>
+                <h2>Quote Configuration</h2>
+            </div>
+            
+            <div id="order-modified-warning" class="warning-banner" style="display: none;">
+                <span class="material-symbols-outlined">warning</span>
+                <span>The order items have been modified. Please verify and update the pricing details below.</span>
+            </div>
+
+            <div class="card">
+                <form id="quote-details-form">
+                    <h3 style="margin-bottom: 1.5rem;">Document Details</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div class="input-group"><input type="text" id="quote-number" class="input-field" placeholder=" " required><label for="quote-number" class="input-label">Quote No.</label></div>
+                        <div class="input-group"><input type="date" id="quote-date" class="input-field" placeholder=" " required><label for="quote-date" class="input-label">Quote Date</label></div>
+                    </div>
+                    
+                    <h3 style="margin-top: 2.5rem; margin-bottom: 1.5rem; border-top: 1px solid var(--light-border); padding-top: 2rem;">Pricing Configuration</h3>
+                    
+                    <div class="checkbox-group" style="margin-bottom: 1.5rem;">
+                        <input type="checkbox" id="diff-prices-check" style="width: 1.25em; height: 1.25em;">
+                        <label for="diff-prices-check" style="font-weight: 600; color: var(--light-text-primary); cursor: pointer;">Use different prices for different items</label>
+                    </div>
+                    
+                    <div id="global-price-container" class="form-group">
+                        <label for="global-price" style="display:block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; color: var(--light-text-secondary);">Global Price per SFT (₹)</label>
+                        <input type="number" id="global-price" class="input-field" min="0" step="0.01">
+                    </div>
+
+                    <div id="individual-prices-container" style="display: none; border: 1px solid var(--light-border); padding: 1.5rem; border-radius: var(--radius-md); background: #f8f9fa;">
+                        <!-- Price inputs per item injected here -->
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="freight-charges" style="display:block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; color: var(--light-text-secondary);">Freight / Transport Charges (₹)</label>
+                            <input type="number" id="freight-charges" class="input-field" min="0" step="1" value="0" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="discount-amount" style="display:block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; color: var(--light-text-secondary);">Discount (₹) Before Tax</label>
+                            <input type="number" id="discount-amount" class="input-field" min="0" step="0.01" value="0">
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin-top: 2.5rem; margin-bottom: 1.5rem; border-top: 1px solid var(--light-border); padding-top: 2rem;">Address Overrides</h3>
+                    
+                    <div class="checkbox-group"><input type="checkbox" id="add-billing-address" style="width: 1.15em; height: 1.15em;"><label for="add-billing-address" style="cursor: pointer;">Add a different Billing Address</label></div>
+                    <textarea id="billing-address-textarea" class="input-field address-textarea" placeholder="Enter new billing address..."></textarea>
+                    
+                    <div class="modal-buttons" style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--light-border);">
+                        <button type="button" id="quote-cancel-btn" class="btn btn-secondary">Cancel</button>
+                        <button type="submit" class="btn btn-primary"><span class="material-symbols-outlined">receipt_long</span> Generate Quote</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Rendered Quote Screen -->
+        <div id="quote-view-screen" style="display: none; animation: fadeIn 0.3s var(--ease);">
+            <div id="quote-container"></div>
+        </div>
+        
+    </div>
+
+    <!-- Print Options Modal (Enhanced UI) -->
+    <div id="print-options-modal" class="modal">
+        <div class="modal-content" style="text-align: center; max-width: 400px; display: flex; flex-direction: column; align-items: center;">
+            <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--color-primary); margin-bottom: 1rem;">draw</span>
+            <h3 style="margin-bottom: 1rem;">Digital Signature</h3>
+            <p style="margin-bottom: 2rem; color: var(--light-text-secondary); line-height: 1.5;">Would you like to include the authorized digital signature on this quotation before printing?</p>
+            <div class="modal-buttons" style="justify-content: center; width: 100%; margin-top: 0; gap: 1rem;">
+                <button type="button" id="print-without-sig-btn" class="btn btn-secondary" style="flex: 1;">No Signature</button>
+                <button type="button" id="print-with-sig-btn" class="btn btn-primary" style="flex: 1;">Add Signature</button>
+            </div>
+            <button type="button" id="print-cancel-btn" style="background: none; border: none; color: var(--light-text-muted); font-size: 0.875rem; font-weight: 500; cursor: pointer; margin-top: 1.5rem; text-decoration: underline;">Cancel</button>
+        </div>
+    </div>
+    
+    <div id="loading-overlay" class="loading-overlay" style="display: none;"><div class="spinner"></div></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Screen Elements
+        const detailsScreen = document.getElementById('quote-details-screen');
+        const viewScreen = document.getElementById('quote-view-screen');
+        const quoteContainer = document.getElementById('quote-container');
+        const modifiedWarning = document.getElementById('order-modified-warning');
+        
+        // Form Elements
+        const detailsForm = document.getElementById('quote-details-form');
+        const cancelBtn = document.getElementById('quote-cancel-btn');
+        const backToOrderBtn = document.getElementById('back-to-order-btn');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const addBillingAddressCheck = document.getElementById('add-billing-address');
+        const billingAddressTextarea = document.getElementById('billing-address-textarea');
+        
+        const diffPricesCheck = document.getElementById('diff-prices-check');
+        const globalPriceContainer = document.getElementById('global-price-container');
+        const globalPriceInput = document.getElementById('global-price');
+        const indPricesContainer = document.getElementById('individual-prices-container');
+
+        // Print Modal Elements
+        const printOptionsModal = document.getElementById('print-options-modal');
+        const printWithSigBtn = document.getElementById('print-with-sig-btn');
+        const printWithoutSigBtn = document.getElementById('print-without-sig-btn');
+        const printCancelBtn = document.getElementById('print-cancel-btn');
+
+        let db, auth, currentOrderData = null;
+
+        // Custom function to accurately convert Rs. and Paise
+        function numberToWords(num) {
+            const a = ['','One ','Two ','Three ','Four ', 'Five ','Six ','Seven ','Eight ','Nine ','Ten ','Eleven ','Twelve ','Thirteen ','Fourteen ','Fifteen ','Sixteen ','Seventeen ','Eighteen ','Nineteen '];
+            const b = ['', '', 'Twenty ','Thirty ','Forty ','Fifty ', 'Sixty ','Seventy ','Eighty ','Ninety '];
+            
+            const convertWhole = (n) => {
+                if (n === 0) return 'Zero';
+                if (n.toString().length > 9) return 'Overflow';
+                let nStr = ('000000000' + n).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+                if (!nStr) return '';
+                let str = '';
+                str += (nStr[1] != 0) ? (a[Number(nStr[1])] || b[nStr[1][0]] + a[nStr[1][1]]) + 'Crore ' : '';
+                str += (nStr[2] != 0) ? (a[Number(nStr[2])] || b[nStr[2][0]] + a[nStr[2][1]]) + 'Lakh ' : '';
+                str += (nStr[3] != 0) ? (a[Number(nStr[3])] || b[nStr[3][0]] + a[nStr[3][1]]) + 'Thousand ' : '';
+                str += (nStr[4] != 0) ? (a[Number(nStr[4])] || b[nStr[4][0]] + a[nStr[4][1]]) + 'Hundred ' : '';
+                str += (nStr[5] != 0) ? ((str != '') ? 'And ' : '') + (a[Number(nStr[5])] || b[nStr[5][0]] + a[nStr[5][1]]) : '';
+                return str.trim();
+            };
+
+            let parts = Number(num).toFixed(2).split('.');
+            let rupees = parseInt(parts[0], 10);
+            let paise = parseInt(parts[1], 10);
+
+            let rupeesWords = convertWhole(rupees);
+            let result = rupeesWords + ' Rupees';
+
+            if (paise > 0) {
+                let paiseWords = convertWhole(paise);
+                paiseWords = paiseWords.replace(/^And\s/i, ''); // Clean up any hanging 'And'
+                result += ' And ' + paiseWords + ' Paise';
+            }
+
+            return result + ' Only';
+        }
+
+        const createQuoteHtml = (order, details) => {
+            let windows = [];
+            try { windows = JSON.parse(order.windows || '[]'); } catch(e) { console.error("Could not parse window data", e); }
+            
+            let tableRows = '';
+            let subTotal = 0;
+            let totalQty = 0;
+            let totalAllSft = 0;
+            let itemIndex = 1;
+
+            if (!details.isDiffPrices) {
+                // AGGREGATED VIEW (Single Global Price)
+                const itemGroups = {};
+                windows.forEach(win => {
+                    const itemName = win.itemType ? (win.itemType.charAt(0).toUpperCase() + win.itemType.slice(1)) : 'Item';
+                    if (!itemGroups[itemName]) { itemGroups[itemName] = { qty: 0, totalSft: 0 }; }
+                    
+                    const qty = parseInt(win.qty) || 1;
+                    itemGroups[itemName].qty += qty;
+                    
+                    const heightMm = parseFloat(win.height || 0);
+                    const widthMm = parseFloat(win.width || 0);
+                    itemGroups[itemName].totalSft += ((widthMm / 304.8) * (heightMm / 304.8)) * qty; 
+                });
+
+                for (const itemName in itemGroups) {
+                    const group = itemGroups[itemName];
+                    const itemCost = group.totalSft * details.globalPrice; 
+                    subTotal += itemCost;
+                    totalQty += group.qty;
+                    totalAllSft += group.totalSft;
+                    tableRows += `<tr><td>${itemIndex++}</td><td class="item-name">${itemName}</td><td>3952</td><td>${group.qty}</td><td>${group.totalSft.toFixed(2)}</td><td>${details.globalPrice.toLocaleString('en-IN')}</td><td>${itemCost.toLocaleString('en-IN', {maximumFractionDigits: 2})}</td></tr>`;
+                }
+            } else {
+                // INDIVIDUAL VIEW (Different Prices per Item)
+                windows.forEach((win, idx) => {
+                    const itemName = win.itemType ? (win.itemType.charAt(0).toUpperCase() + win.itemType.slice(1)) : 'Item';
+                    const qty = parseInt(win.qty) || 1;
+                    const heightMm = parseFloat(win.height || 0);
+                    const widthMm = parseFloat(win.width || 0);
+                    const totalSft = ((widthMm / 304.8) * (heightMm / 304.8)) * qty;
+                    
+                    const price = details.itemPrices[idx] || 0;
+                    const itemCost = totalSft * price;
+
+                    subTotal += itemCost;
+                    totalQty += qty;
+                    totalAllSft += totalSft;
+
+                    const specs = `<br><small style="color: #718096; font-size: 11px;">Size: ${win.width}x${win.height}mm | Glass: ${win.hasGlass ? (win.glassName || 'Yes') : 'None'} | Profile: ${win.profileName || 'None'}</small>`;
+
+                    tableRows += `<tr><td>${itemIndex++}</td><td class="item-name">${itemName} #${idx+1}${specs}</td><td>3952</td><td>${qty}</td><td>${totalSft.toFixed(2)}</td><td>${price.toLocaleString('en-IN')}</td><td>${itemCost.toLocaleString('en-IN', {maximumFractionDigits: 2})}</td></tr>`;
+                });
+            }
+
+            // Append Table Footer for Totals
+            tableRows += `
+                <tr style="font-weight: 700; background-color: #f8f9fa; border-top: 2px solid var(--light-border);">
+                    <td colspan="3" style="text-align: right; padding-top: 12px; padding-bottom: 12px;">Total:</td>
+                    <td style="padding-top: 12px; padding-bottom: 12px;">${totalQty}</td>
+                    <td style="padding-top: 12px; padding-bottom: 12px;">${totalAllSft.toFixed(2)}</td>
+                    <td></td>
+                    <td style="padding-top: 12px; padding-bottom: 12px;">${subTotal.toLocaleString('en-IN', {maximumFractionDigits: 2})}</td>
+                </tr>
+            `;
+            
+            const formatCurrency = (num) => num.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+            // Exact calculation structure
+            const discount = details.discount || 0;
+            const totalBeforeTax = subTotal;
+            const taxableAmount = Math.max(0, totalBeforeTax - discount);
+            const sgst = taxableAmount * 0.09;
+            const cgst = taxableAmount * 0.09;
+            const grandTotal = taxableAmount + details.freight + sgst + cgst;
+            
+            const totalInWords = numberToWords(grandTotal);
+
+            let summaryTableHtml = `<tr><td>Total Before Tax:</td><td style="text-align: right;">${formatCurrency(totalBeforeTax)}</td></tr>`;
+            if (discount > 0) {
+                summaryTableHtml += `<tr><td>Discount:</td><td style="text-align: right;">- ${formatCurrency(discount)}</td></tr>`;
+                summaryTableHtml += `<tr><td>Taxable Amount:</td><td style="text-align: right;">${formatCurrency(taxableAmount)}</td></tr>`;
+            }
+            summaryTableHtml += `
+                <tr><td>Freight:</td><td style="text-align: right;">+ ${formatCurrency(details.freight)}</td></tr>
+                <tr><td>SGST (9%):</td><td style="text-align: right;">+ ${formatCurrency(sgst)}</td></tr>
+                <tr><td>CGST (9%):</td><td style="text-align: right;">+ ${formatCurrency(cgst)}</td></tr>
+                <tr><td>Grand Total:</td><td style="text-align: right;">₹ ${formatCurrency(grandTotal)}</td></tr>
+            `;
+
+            return `
+                <div id="quote-controls">
+                    <button class="btn btn-secondary" onclick="window.location.href='order-details.html?id=${order.id}'"><span class="material-symbols-outlined">arrow_back</span> Back to Details</button>
+                    <button class="btn btn-primary" id="print-quote-btn"><span class="material-symbols-outlined">print</span> Print / Save PDF</button>
+                    <button class="btn btn-secondary" id="edit-quote-btn"><span class="material-symbols-outlined">edit</span> Edit Details</button>
+                </div>
+                <div class="invoice-box">
+                    <header class="header">
+                        <div class="company-details"><img src="https://ihtnas.com/assets/ihtnas-nav.png" alt="Company Logo" class="logo-img"></div>
+                        <div class="invoice-details">
+                            <h2>QUOTATION</h2>
+                            <div><strong>Quote No:</strong> ${details.quoteNumber}</div>
+                            <div><strong>Quote Date:</strong> ${new Date(details.quoteDate + 'T00:00:00').toLocaleDateString('en-GB')}</div>
+                            <div><strong>GSTIN:</strong> 37ECPPK6026R1ZO</div>
+                        </div>
+                    </header>
+                    <section class="customer-info">
+                        <div class="address-block">
+                            <h3>Quotation For</h3>
+                            <p><strong>${order.name}</strong><br>${details.billingAddress.replace(/\n/g, '<br>')}<br>Phone: ${order.mobileNumber || 'N/A'}</p>
+                        </div>
+                    </section>
+                    <table class="items-table">
+                        <thead><tr><th>SNo.</th><th>Name of the Goods / Service</th><th>HSN/SAC</th><th>Qty</th><th>Sft (Total)</th><th>Rate</th><th>Value</th></tr></thead>
+                        <tbody>${tableRows}</tbody>
+                    </table>
+                    <section class="summary-section">
+                        <div class="summary-notes">
+                            <strong>Declaration & Terms</strong>
+                            <p>We declare that this quotation shows the actual price of the goods described and that all particulars are true and correct. Validity: 30 Days.</p>
+                            <strong>Total in Words</strong>
+                            <p>${totalInWords}.</p>
+                        </div>
+                        <div class="summary-totals">
+                            <table>
+                                <tbody>
+                                    ${summaryTableHtml}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    <footer class="footer">
+                        <div class="contact"><span>Email: kolatapuk.k@gmail.com | Phone: 7981599155</span></div>
+                        <div class="signature">
+                            <div class="signature-space">
+                                <img src="https://ksupvc.wixo.in/signature.png" alt="Digital Signature" class="digital-signature-img" id="digital-signature-img">
+                            </div>
+                            <div class="signature-line"></div>
+                            <p class="signatory-title">Authorised Signatory</p>
+                        </div>
+                    </footer>
+                </div>`;
+        };
+
+        async function initializeFirebase() {
+            try {
+                const firebaseConfig = {
+                    apiKey: "__API_KEY__",
+                    authDomain: "__AUTH_DOMAIN__",
+                    projectId: "__PROJECT_ID__",
+                    storageBucket: "__STORAGE_BUCKET__",
+                    messagingSenderId: "__MESSAGING_SENDER_ID__",
+                    appId: "__APP_ID__"
+                };
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                onAuthStateChanged(auth, user => {
+                    if (user) { startPageLogic(); } 
+                    else { window.location.href = 'login.html'; }
+                });
+            } catch (error) { console.error("Firebase Init Error:", error); }
+        }
+
+        // Dynamic visibility logic for price inputs
+        const togglePriceInputsVisibility = () => {
+            if (diffPricesCheck.checked) {
+                globalPriceContainer.style.display = 'none';
+                indPricesContainer.style.display = 'block';
+                globalPriceInput.removeAttribute('required');
+                document.querySelectorAll('.ind-price-input').forEach(inp => inp.setAttribute('required', 'true'));
+            } else {
+                globalPriceContainer.style.display = 'block';
+                indPricesContainer.style.display = 'none';
+                globalPriceInput.setAttribute('required', 'true');
+                document.querySelectorAll('.ind-price-input').forEach(inp => inp.removeAttribute('required'));
+            }
+        };
+
+        diffPricesCheck.addEventListener('change', togglePriceInputsVisibility);
+
+        function populateForm(details, orderData) {
+            document.getElementById('quote-number').value = details.quoteNumber || '';
+            document.getElementById('quote-date').value = details.quoteDate || new Date().toISOString().split('T')[0];
+            document.getElementById('freight-charges').value = details.freight || 0;
+            document.getElementById('discount-amount').value = details.discount || 0;
+            
+            diffPricesCheck.checked = details.isDiffPrices || false;
+            globalPriceInput.value = details.globalPrice || '';
+            
+            if (details.billingAddress && details.billingAddress !== orderData.address) {
+                addBillingAddressCheck.checked = true;
+                billingAddressTextarea.style.display = 'block';
+                billingAddressTextarea.value = details.billingAddress;
+            } else {
+                addBillingAddressCheck.checked = false;
+                billingAddressTextarea.style.display = 'none';
+                billingAddressTextarea.value = '';
+            }
+
+            // Build Individual Pricing Inputs dynamically based on current order windows
+            let windows = [];
+            try { windows = JSON.parse(orderData.windows || '[]'); } catch(e) {}
+            
+            indPricesContainer.innerHTML = '';
+            windows.forEach((win, idx) => {
+                const itemType = win.itemType ? (win.itemType.charAt(0).toUpperCase() + win.itemType.slice(1)) : 'Item';
+                const qty = parseInt(win.qty) || 1;
+                
+                // Inherit saved price, or fallback to global, or empty
+                const savedPrice = (details.itemPrices && details.itemPrices[idx]) 
+                    ? details.itemPrices[idx] 
+                    : (details.globalPrice || '');
+                
+                const div = document.createElement('div');
+                div.style.marginBottom = '1.25rem';
+                div.innerHTML = `
+                    <label style="display:block; font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--light-text-primary);">#${idx+1} ${itemType} <span style="color:var(--light-text-muted);font-weight:normal;font-size:0.8rem;">(${win.width}x${win.height}mm, Qty: ${qty})</span></label>
+                    <input type="number" class="input-field ind-price-input" style="padding: 0.75rem;" data-index="${idx}" value="${savedPrice}" min="0" step="0.01" placeholder="Price per SFT for this item">
+                `;
+                indPricesContainer.appendChild(div);
+            });
+
+            togglePriceInputsVisibility();
+        }
+
+        function renderQuote(order, details) {
+            quoteContainer.innerHTML = createQuoteHtml(order, details);
+            
+            const editBtn = document.getElementById('edit-quote-btn');
+            if (editBtn) {
+                editBtn.addEventListener('click', () => {
+                    populateForm(details, order);
+                    modifiedWarning.style.display = 'none'; // Hide warning if explicitly editing
+                    viewScreen.style.display = 'none';
+                    detailsScreen.style.display = 'block';
+                });
+            }
+
+            const printBtn = document.getElementById('print-quote-btn');
+            if (printBtn) {
+                printBtn.addEventListener('click', () => {
+                    printOptionsModal.style.display = 'flex';
+                });
+            }
+        }
+
+        async function startPageLogic() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('id');
+            if (!orderId) {
+                alert("No order specified. Redirecting...");
+                window.location.href = 'view-orders.html';
+                return;
+            }
+
+            loadingOverlay.style.display = 'flex';
+            try {
+                const orderSnap = await getDoc(doc(db, 'upvc_orders', orderId));
+                if (orderSnap.exists()) {
+                    currentOrderData = { id: orderSnap.id, ...orderSnap.data() };
+                    detailsForm.dataset.id = orderId;
+                    
+                    if (currentOrderData.quoteDetails) {
+                        const savedHash = currentOrderData.quoteDetails.savedWindowsHash;
+                        const currentHash = currentOrderData.windows; // It's already stringified in DB
+                        
+                        if (savedHash === currentHash) {
+                            // Exact match - Render immediately
+                            populateForm(currentOrderData.quoteDetails, currentOrderData);
+                            renderQuote(currentOrderData, currentOrderData.quoteDetails);
+                            detailsScreen.style.display = 'none';
+                            viewScreen.style.display = 'block';
+                        } else {
+                            // Order has changed - notify and open full-screen form
+                            modifiedWarning.style.display = 'flex';
+                            populateForm(currentOrderData.quoteDetails, currentOrderData);
+                            viewScreen.style.display = 'none';
+                            detailsScreen.style.display = 'block';
+                        }
+                    } else {
+                        // New Quote
+                        populateForm({}, currentOrderData);
+                        viewScreen.style.display = 'none';
+                        detailsScreen.style.display = 'block';
+                        document.getElementById('quote-number').focus();
+                    }
+                } else {
+                    alert("Order not found.");
+                }
+            } catch (error) {
+                console.error("Error loading order:", error);
+                alert("Error loading order.");
+            } finally {
+                loadingOverlay.style.display = 'none';
+            }
+        }
+        
+        detailsForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            loadingOverlay.style.display = 'flex';
+            const orderId = e.currentTarget.dataset.id;
+            
+            try {
+                const isDiffPrices = diffPricesCheck.checked;
+                const itemPrices = [];
+                document.querySelectorAll('.ind-price-input').forEach(inp => {
+                    itemPrices.push(parseFloat(inp.value) || 0);
+                });
+
+                const quoteDetails = {
+                    quoteNumber: document.getElementById('quote-number').value,
+                    quoteDate: document.getElementById('quote-date').value,
+                    isDiffPrices: isDiffPrices,
+                    globalPrice: parseFloat(globalPriceInput.value) || 0,
+                    itemPrices: itemPrices,
+                    freight: parseFloat(document.getElementById('freight-charges').value || 0),
+                    discount: parseFloat(document.getElementById('discount-amount').value || 0),
+                    billingAddress: addBillingAddressCheck.checked ? billingAddressTextarea.value : currentOrderData.address,
+                    savedWindowsHash: currentOrderData.windows
+                };
+                
+                // Save to Firestore
+                await updateDoc(doc(db, 'upvc_orders', orderId), { quoteDetails });
+                
+                // Update local memory and render
+                currentOrderData.quoteDetails = quoteDetails;
+                renderQuote(currentOrderData, quoteDetails);
+                
+                // Switch screens
+                detailsScreen.style.display = 'none';
+                viewScreen.style.display = 'block';
+                
+            } catch (error) { 
+                console.error("Error generating quote:", error); 
+                alert("Could not generate quote."); 
+            } 
+            finally { 
+                loadingOverlay.style.display = 'none'; 
+            }
+        });
+        
+        // Navigation Buttons handlers
+        const goBackToOrder = () => {
+            const orderId = detailsForm.dataset.id;
+            window.location.href = `order-details.html?id=${orderId}`;
+        };
+
+        cancelBtn.addEventListener('click', () => {
+            if (currentOrderData && currentOrderData.quoteDetails && currentOrderData.quoteDetails.savedWindowsHash === currentOrderData.windows) {
+                detailsScreen.style.display = 'none';
+                viewScreen.style.display = 'block';
+            } else {
+                goBackToOrder();
+            }
+        });
+
+        backToOrderBtn.addEventListener('click', goBackToOrder);
+
+        // Print Modal Button Handlers
+        printCancelBtn.addEventListener('click', () => {
+            printOptionsModal.style.display = 'none';
+        });
+
+        printWithSigBtn.addEventListener('click', () => {
+            const sigImg = document.getElementById('digital-signature-img');
+            if (sigImg) sigImg.style.display = 'inline-block';
+            printOptionsModal.style.display = 'none';
+            setTimeout(() => window.print(), 150); // slight delay to allow rendering
+        });
+
+        printWithoutSigBtn.addEventListener('click', () => {
+            const sigImg = document.getElementById('digital-signature-img');
+            if (sigImg) sigImg.style.display = 'none';
+            printOptionsModal.style.display = 'none';
+            setTimeout(() => window.print(), 150);
+        });
+
+        addBillingAddressCheck.addEventListener('change', () => { billingAddressTextarea.style.display = addBillingAddressCheck.checked ? 'block' : 'none'; });
+
+        initializeFirebase();
+    </script>
+</body>
+</html>
