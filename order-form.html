@@ -97,10 +97,10 @@
         .window-entry-title { font-size: 1rem; font-weight: 600; color: var(--light-text-primary); flex-grow: 1; }
         .remove-window-btn {background: none; border: none; padding: 0.25rem;color: var(--light-text-muted); cursor: pointer; border-radius: 9999px;display: flex; align-items: center; justify-content: center;transition: color 0.2s, background-color 0.2s;position: static;}
         .remove-window-btn:hover { background-color: var(--light-bg-tertiary); color: var(--color-danger); }
-        .glass-options {margin-bottom: 1rem;padding: 1rem;background-color: var(--light-bg-secondary);border-radius: var(--radius-md);display: flex;flex-direction: column;gap: 1rem;}
+        .global-options {margin-bottom: 1rem;padding: 1.5rem;background-color: var(--light-bg-secondary);border-radius: var(--radius-md);display: flex;flex-direction: column;gap: 1.5rem; border: 1px solid var(--light-border);}
         .checkbox-group {display: flex;align-items: center;gap: 0.5rem;}
         .checkbox-group label {font-weight: 500;color: var(--light-text-primary);cursor: pointer;}
-        .glass-control {grid-column: span 2;margin-top: 1rem;padding-top: 1rem;border-top: 1px dashed var(--light-border);display: flex;align-items: center;gap: 1.5rem;}
+        .glass-control, .profile-control {grid-column: span 2;margin-top: 0.5rem;padding-top: 1rem;border-top: 1px dashed var(--light-border);display: flex;align-items: center;gap: 1.5rem;}
         .form-actions-container {display: flex; justify-content: flex-end; margin-top: 2rem; border-top: 1px solid var(--light-border); padding-top: 2rem;}
         .modal {display: none; position: fixed; z-index: 1000; inset: 0;width: 100%; height: 100%;background-color: rgba(17, 24, 39, 0.6); backdrop-filter: blur(4px);align-items: center; justify-content: center;animation: fadeIn 0.3s var(--ease);}
         .modal-content {background-color: white; padding: 2rem; border-radius: var(--radius-lg);box-shadow: var(--shadow-lg); width: 90%; max-width: 420px;text-align: center; animation: popIn 0.3s var(--ease);}
@@ -139,7 +139,7 @@
                     <div class="desktop-profile">
                          <div class="profile-dropdown-container">
                              <div class="profile-container" id="desktopProfileTrigger" tabindex="0" role="button" aria-haspopup="true" aria-expanded="false">
-                                <img src=" " class="profile-pic" alt="Profile Picture" id="desktop-profile-pic">
+                                <img src="https://ui-avatars.com/api/?name=User&background=random" class="profile-pic" alt="Profile Picture" id="desktop-profile-pic">
                                 <div class="profile-info">
                                     <span class="profile-name" id="desktop-profile-name">Loading...</span>
                                     <span class="profile-email" id="desktop-profile-email"></span>
@@ -195,7 +195,8 @@
                     <div class="skeleton skeleton-input grid-col-span-2"></div>
                 </div>
                 <div class="skeleton skeleton-h3" style="width: 30%;"></div>
-                <div class="glass-options">
+                <div class="global-options">
+                    <div class="skeleton skeleton-line" style="width: 200px; height: 20px;"></div>
                     <div class="skeleton skeleton-line" style="width: 200px; height: 20px;"></div>
                 </div>
                 <div class="window-entry">
@@ -218,11 +219,15 @@
         <div id="real-content" style="display: none;">
             <div id="form-screen" class="screen active">
                 <div class="page-header">
-                    <h2 id="form-title"></h2>
+                    <h2 id="form-title">Create New Order</h2>
                 </div>
                 <div class="card">
                     <form id="order-form">
-                        <input type="hidden" id="order-id"><input type="hidden" id="customer-lat"><input type="hidden" id="customer-lon"><input type="hidden" id="original-order-data">
+                        <input type="hidden" id="order-id">
+                        <input type="hidden" id="customer-lat">
+                        <input type="hidden" id="customer-lon">
+                        <input type="hidden" id="original-order-data">
+                        
                         <h3 style="margin-top: 1.5rem; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--light-border);">Customer Information</h3>
                         <div class="form-grid">
                             <div class="input-group"><input type="text" id="customer-name" class="input-field" placeholder=" " required><label for="customer-name" class="input-label">Customer Name</label></div>
@@ -231,14 +236,46 @@
                             <div class="input-group grid-col-span-2"><button type="button" id="get-location-btn" class="btn-secondary" style="width: 100%;"><span class="material-symbols-outlined">pin_drop</span> Set Customer Location on Map</button></div>
                             <div class="input-group grid-col-span-2"><input type="date" id="due-date" class="input-field" placeholder=" " required><label for="due-date" class="input-label">Due Date</label></div>
                         </div>
-                        <h3 style="margin-top: 2.5rem; margin-bottom: 1rem;">Window Details</h3>
-                        <div id="glass-options-container" class="glass-options">
-                            <div class="checkbox-group"><input type="checkbox" id="same-glass-all" style="width: 1.15em; height: 1.15em;"><label for="same-glass-all">Same glass for all windows</label></div>
-                            <div id="global-glass-name-container" style="display: none;"><div class="input-group"><input type="text" id="global-glass-name" class="input-field" placeholder=" "><label for="global-glass-name" class="input-label">Glass Name</label></div></div>
+
+                        <h3 style="margin-top: 2.5rem; margin-bottom: 1rem;">Item Details & Options</h3>
+                        
+                        <!-- NEW MERGED GLOBAL OPTIONS CONTAINER -->
+                        <div id="global-options-container" class="global-options">
+                            <!-- Global Glass -->
+                            <div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="same-glass-all" checked style="width: 1.15em; height: 1.15em;">
+                                    <label for="same-glass-all">Same glass for all items</label>
+                                </div>
+                                <div id="global-glass-name-container" style="display: block; margin-top: 1rem;">
+                                    <div class="input-group">
+                                        <input type="text" id="global-glass-name" class="input-field" placeholder=" ">
+                                        <label for="global-glass-name" class="input-label">Global Glass Name</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Global Profile -->
+                            <div style="padding-top: 1.5rem; border-top: 1px dashed var(--light-border);">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="same-profile-all" checked style="width: 1.15em; height: 1.15em;">
+                                    <label for="same-profile-all">Same profile name for all items</label>
+                                </div>
+                                <div id="global-profile-name-container" style="display: block; margin-top: 1rem;">
+                                    <div class="input-group">
+                                        <input type="text" id="global-profile-name" class="input-field" placeholder=" ">
+                                        <label for="global-profile-name" class="input-label">Global Profile Name</label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
                         <div id="windows-container"></div>
-                        <button type="button" id="add-window-btn" class="btn-secondary" style="width: 100%; margin: 1rem 0;"><span class="material-symbols-outlined">add</span> Add Another Window</button>
-                        <div class="form-actions-container"><button type="submit" id="save-order-btn" class="btn-success"></button></div>
+                        
+                        <button type="button" id="add-window-btn" class="btn-secondary" style="width: 100%; margin: 1rem 0;"><span class="material-symbols-outlined">add</span> Add Another Item</button>
+                        
+                        <div class="form-actions-container">
+                            <button type="submit" id="save-order-btn" class="btn-success"><span class="material-symbols-outlined">save</span> Save Order</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -247,6 +284,7 @@
     
     <div id="message-modal" class="modal"><div class="modal-content"><p id="message-text" class="modal-message"></p><button id="message-ok-btn" class="btn-primary" style="min-width: 120px;">OK</button></div></div>
     <div id="loading-overlay" class="loading-overlay" style="display: none;"><div class="spinner"></div></div>
+    
     <div id="location-picker-modal" class="modal"><div class="modal-content" style="max-width: 800px; text-align: left; padding: 0; animation: popIn 0.3s var(--ease);"><div style="padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--light-border);"><h3 >Select Customer Location</h3><button id="location-picker-close-btn" class="remove-window-btn" style="position: static; border-radius: 50%;"><span class="material-symbols-outlined">close</span></button></div><div id="map-container" style="height: 400px; width: 100%; position: relative;"><div class="map-pin"></div></div><div style="padding: 1.5rem; display: flex; justify-content: flex-end; gap: 1rem; border-top: 1px solid var(--light-border);"><button id="cancel-location-btn" class="btn-secondary">Cancel</button><button id="confirm-location-btn" class="btn-primary">Confirm Location</button></div></div></div>
 
     <script type="module">
@@ -272,9 +310,16 @@
         const windowsContainer = document.getElementById('windows-container');
         const addWindowBtn = document.getElementById('add-window-btn');
         const saveOrderBtn = document.getElementById('save-order-btn');
+        
+        // Global Option Elements
         const sameGlassAllCheckbox = document.getElementById('same-glass-all');
         const globalGlassNameContainer = document.getElementById('global-glass-name-container');
         const globalGlassNameInput = document.getElementById('global-glass-name');
+        
+        const sameProfileAllCheckbox = document.getElementById('same-profile-all');
+        const globalProfileNameContainer = document.getElementById('global-profile-name-container');
+        const globalProfileNameInput = document.getElementById('global-profile-name');
+        
         const messageModal = document.getElementById('message-modal');
         const messageText = document.getElementById('message-text');
         const messageOkBtn = document.getElementById('message-ok-btn');
@@ -282,57 +327,569 @@
         const confirmLocationBtn = document.getElementById('confirm-location-btn');
         const locationPickerCloseBtn = document.getElementById('location-picker-close-btn');
         const cancelLocationBtn = document.getElementById('cancel-location-btn');
+        
         let db, auth, map, currentUserAuth;
+        let mapInitialized = false;
 
         // --- ALL UI & HELPER FUNCTIONS ---
         const showLoading = () => loadingOverlay.style.display = 'flex';
         const hideLoading = () => loadingOverlay.style.display = 'none';
+        
         const showMessageModal = (message, redirectUrl = null) => {
-            messageText.textContent = message; messageModal.style.display = 'flex';
-            if (redirectUrl) { setTimeout(() => { messageModal.style.display = 'none'; window.location.href = redirectUrl; }, 1500); }
+            messageText.textContent = message; 
+            messageModal.style.display = 'flex';
+            if (redirectUrl) { 
+                setTimeout(() => { 
+                    messageModal.style.display = 'none'; 
+                    window.location.href = redirectUrl; 
+                }, 1500); 
+            }
         };
+
+        const updateWindowTitles = (container) => {
+            container.querySelectorAll('.window-entry').forEach((entry, idx) => {
+                entry.querySelector('.window-entry-title').textContent = `#${idx + 1}`;
+                
+                // Update Glass check ID properly to avoid conflicts
+                const glassCheckbox = entry.querySelector('.has-glass-checkbox');
+                const glassLabel = entry.querySelector('label[for^="glass-check-"]');
+                const newId = `glass-check-${idx + 1}`;
+                if (glassCheckbox) glassCheckbox.id = newId;
+                if (glassLabel) glassLabel.htmlFor = newId;
+            });
+        };
+
         const addWindowInput = (container, index, data = {}) => {
-            const { height = '', width = '', hasGlass = false, glassName = '', itemType = 'sliding window' } = data;
+            const { 
+                height = '', 
+                width = '', 
+                qty = 1, 
+                hasGlass = false, 
+                glassName = '', 
+                profileName = '', 
+                itemType = 'sliding window' 
+            } = data;
+            
             const windowEntryDiv = document.createElement('div');
             windowEntryDiv.className = 'window-entry';
             const itemOptions = ['sliding window', 'sliding door', 'casement window', 'casement door', 'Ventilator lowers', 'Ventilator fan provision', 'Fixed'];
             const optionsHtml = itemOptions.map(opt => `<option value="${opt}" ${opt === itemType ? 'selected' : ''}>${opt.charAt(0).toUpperCase() + opt.slice(1)}</option>`).join('');
             
-            // **MODIFICATION:** Swapped Width and Height fields
-            windowEntryDiv.innerHTML = `<div class="window-entry-header"><select class="item-type-select input-field">${optionsHtml}</select><span class="window-entry-title">#${index}</span><button type="button" class="remove-window-btn"><span class="material-symbols-outlined">close</span></button></div><div class="input-group"><input type="number" class="window-width-input input-field" value="${width}" min="1" step="1" placeholder=" " required><label class="input-label">Width (mm)</label></div><div class="input-group"><input type="number" class="window-height-input input-field" value="${height}" min="1" step="1" placeholder=" " required><label class="input-label">Height (mm)</label></div><div class="glass-control"><div class="checkbox-group"><input type="checkbox" id="glass-check-${index}" class="has-glass-checkbox" ${hasGlass ? 'checked' : ''} style="width: 1.15em; height: 1.15em;"><label for="glass-check-${index}">Glass</label></div><div class="individual-glass-name-container" style="display: none; flex-grow: 1;"><div class="input-group"><input type="text" class="individual-glass-name input-field" value="${glassName}" placeholder=" "><label class="input-label">Glass Name</label></div></div></div>`;
+            windowEntryDiv.innerHTML = `
+                <div class="window-entry-header">
+                    <select class="item-type-select input-field">${optionsHtml}</select>
+                    <span class="window-entry-title">#${index}</span>
+                    <button type="button" class="remove-window-btn"><span class="material-symbols-outlined">close</span></button>
+                </div>
+                <div class="input-group">
+                    <input type="number" class="window-width-input input-field" value="${width}" min="1" step="1" placeholder=" " required>
+                    <label class="input-label">Width (mm)</label>
+                </div>
+                <div class="input-group">
+                    <input type="number" class="window-height-input input-field" value="${height}" min="1" step="1" placeholder=" " required>
+                    <label class="input-label">Height (mm)</label>
+                </div>
+                <!-- Quantity Field -->
+                <div class="input-group grid-col-span-2">
+                    <input type="number" class="window-qty-input input-field" value="${qty}" min="1" step="1" placeholder=" " required>
+                    <label class="input-label">Quantity</label>
+                </div>
+                
+                <!-- Individual Glass Control -->
+                <div class="glass-control">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="glass-check-${index}" class="has-glass-checkbox" ${hasGlass ? 'checked' : ''} style="width: 1.15em; height: 1.15em;">
+                        <label for="glass-check-${index}">Glass</label>
+                    </div>
+                    <div class="individual-glass-name-container" style="display: none; flex-grow: 1;">
+                        <div class="input-group">
+                            <input type="text" class="individual-glass-name input-field" value="${glassName}" placeholder=" ">
+                            <label class="input-label">Glass Name</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Individual Profile Control -->
+                <div class="profile-control">
+                    <div class="individual-profile-name-container" style="display: ${sameProfileAllCheckbox.checked ? 'none' : 'block'}; flex-grow: 1; width: 100%;">
+                        <div class="input-group">
+                            <input type="text" class="individual-profile-name input-field" value="${profileName}" placeholder=" ">
+                            <label class="input-label">Profile Name</label>
+                        </div>
+                    </div>
+                </div>
+            `;
             
             container.appendChild(windowEntryDiv);
-            windowEntryDiv.querySelector('.has-glass-checkbox').addEventListener('change', () => { updateWindowGlassUI(windowEntryDiv); saveDraft(); });
-            windowEntryDiv.querySelector('.remove-window-btn').addEventListener('click', () => { windowEntryDiv.remove(); updateWindowTitles(container); saveDraft(); });
-            windowEntryDiv.querySelectorAll('input:not(.has-glass-checkbox), .item-type-select, .individual-glass-name').forEach(input => input.addEventListener('input', saveDraft));
+            
+            windowEntryDiv.querySelector('.has-glass-checkbox').addEventListener('change', () => { 
+                updateWindowGlassUI(windowEntryDiv); 
+                saveDraft(); 
+            });
+            
+            windowEntryDiv.querySelector('.remove-window-btn').addEventListener('click', () => { 
+                windowEntryDiv.remove(); 
+                updateWindowTitles(container); 
+                saveDraft(); 
+            });
+            
+            windowEntryDiv.querySelectorAll('input:not([type="checkbox"]), .item-type-select').forEach(input => {
+                input.addEventListener('input', saveDraft);
+            });
+            
             updateWindowGlassUI(windowEntryDiv);
+            updateWindowProfileUI(windowEntryDiv);
         };
-        const updateWindowGlassUI = (windowEntryDiv) => { const glassCheckbox = windowEntryDiv.querySelector('.has-glass-checkbox'); const individualContainer = windowEntryDiv.querySelector('.individual-glass-name-container'); individualContainer.style.display = (glassCheckbox.checked && !sameGlassAllCheckbox.checked) ? 'block' : 'none'; };
-        const updateAllWindowGlassUIs = () => { document.querySelectorAll('#windows-container .window-entry').forEach(updateWindowGlassUI); };
-        const updateWindowTitles = (container) => { container.querySelectorAll('.window-entry').forEach((entry, index) => { entry.querySelector('.window-entry-title').textContent = `#${index + 1}`; const checkbox = entry.querySelector('.has-glass-checkbox'); const label = entry.querySelector('label[for^="glass-check-"]'); const newId = `glass-check-${index + 1}`; checkbox.id = newId; if(label) label.htmlFor = newId; }); };
-        
+
+        const updateWindowGlassUI = (windowEntryDiv) => { 
+            const glassCheckbox = windowEntryDiv.querySelector('.has-glass-checkbox'); 
+            const individualContainer = windowEntryDiv.querySelector('.individual-glass-name-container'); 
+            individualContainer.style.display = (glassCheckbox.checked && !sameGlassAllCheckbox.checked) ? 'block' : 'none'; 
+        };
+
+        const updateWindowProfileUI = (windowEntryDiv) => { 
+            const individualContainer = windowEntryDiv.querySelector('.individual-profile-name-container'); 
+            individualContainer.style.display = (!sameProfileAllCheckbox.checked) ? 'block' : 'none'; 
+        };
+
+        const updateAllWindowGlassUIs = () => { 
+            document.querySelectorAll('#windows-container .window-entry').forEach(updateWindowGlassUI); 
+        };
+
+        const updateAllWindowProfileUIs = () => { 
+            document.querySelectorAll('#windows-container .window-entry').forEach(updateWindowProfileUI); 
+        };
+
         const showRealContent = () => {
             skeletonLoader.style.display = 'none';
             realContent.style.display = 'block';
             realContent.style.animation = 'fadeIn 0.5s var(--ease)';
         };
 
-        const setupFormForCreate = () => { formTitle.textContent = 'Create New Order'; saveOrderBtn.innerHTML = '<span class="material-symbols-outlined">save</span> Save Order'; orderForm.reset(); orderIdInput.value = ''; customerLatInput.value = ''; customerLonInput.value = ''; sameGlassAllCheckbox.checked = false; globalGlassNameContainer.style.display = 'none'; getLocationBtn.innerHTML = '<span class="material-symbols-outlined">pin_drop</span> Set Customer Location on Map'; getLocationBtn.classList.remove('btn-success'); windowsContainer.innerHTML = ''; addWindowInput(windowsContainer, 1); loadDraft(); showRealContent(); };
-        const setupFormForEdit = (order) => { formTitle.textContent = 'Edit Order'; saveOrderBtn.innerHTML = '<span class="material-symbols-outlined">update</span> Update Order'; orderForm.reset(); originalOrderDataInput.value = JSON.stringify(order); orderIdInput.value = order.id; customerNameInput.value = order.name; customerAddressInput.value = order.address; customerMobileInput.value = order.mobileNumber || ''; dueDateInput.value = order.dueDate || ''; customerLatInput.value = order.latitude || ''; customerLonInput.value = order.longitude || ''; if (order.latitude && order.longitude) { getLocationBtn.innerHTML = '<span class="material-symbols-outlined">edit_location</span> Location Set - Edit'; getLocationBtn.classList.add('btn-success'); } let windowsToLoad = []; try { windowsToLoad = JSON.parse(order.windows || '[]'); } catch(e) {} const windowsWithGlass = windowsToLoad.filter(w => w.hasGlass); const firstGlassName = windowsWithGlass.length > 0 ? windowsWithGlass[0].glassName : null; const allSame = windowsWithGlass.every(w => w.glassName === firstGlassName); if (windowsWithGlass.length > 0 && allSame && firstGlassName) { sameGlassAllCheckbox.checked = true; globalGlassNameContainer.style.display = 'block'; globalGlassNameInput.value = firstGlassName || ''; } else { sameGlassAllCheckbox.checked = false; globalGlassNameContainer.style.display = 'none'; globalGlassNameInput.value = ''; } windowsContainer.innerHTML = ''; if (windowsToLoad.length > 0) { windowsToLoad.forEach((win, index) => addWindowInput(windowsContainer, index + 1, win)); } else { addWindowInput(windowsContainer, 1); } showRealContent(); };
-        function saveDraft() { if(orderIdInput.value) return; const draft = { name: customerNameInput.value, mobile: customerMobileInput.value, address: customerAddressInput.value, dueDate: dueDateInput.value, lat: customerLatInput.value, lon: customerLonInput.value, sameGlass: sameGlassAllCheckbox.checked, globalGlassName: globalGlassNameInput.value, windows: Array.from(windowsContainer.querySelectorAll('.window-entry')).map(entry => ({ itemType: entry.querySelector('.item-type-select').value, height: entry.querySelector('.window-height-input').value, width: entry.querySelector('.window-width-input').value, hasGlass: entry.querySelector('.has-glass-checkbox').checked, glassName: entry.querySelector('.individual-glass-name').value })) }; localStorage.setItem('orderDraft', JSON.stringify(draft)); }
-        function loadDraft() { const draftJSON = localStorage.getItem('orderDraft'); if (draftJSON) { const data = JSON.parse(draftJSON); customerNameInput.value = data.name || ''; customerMobileInput.value = data.mobile || ''; customerAddressInput.value = data.address || ''; dueDateInput.value = data.dueDate || ''; customerLatInput.value = data.lat || ''; customerLonInput.value = data.lon || ''; sameGlassAllCheckbox.checked = data.sameGlass || false; globalGlassNameInput.value = data.globalGlassName || ''; globalGlassNameContainer.style.display = data.sameGlass ? 'block' : 'none'; if (data.lat && data.lon) { getLocationBtn.innerHTML = '<span class="material-symbols-outlined">edit_location</span> Location Set - Edit'; getLocationBtn.classList.add('btn-success'); } windowsContainer.innerHTML = ''; if (data.windows && data.windows.length > 0) { data.windows.forEach((win, i) => addWindowInput(windowsContainer, i + 1, win)); } else { addWindowInput(windowsContainer, 1); } showMessageModal("Your unsaved draft has been restored."); } }
-        const openLocationPicker = async () => { locationPickerModal.style.display = 'flex'; showLoading(); let initialLat = customerLatInput.value || 20.5937; let initialLon = customerLonInput.value || 78.9629; let initialZoom = customerLatInput.value ? 16 : 5; const setupMap = (lat, lon, zoom) => { if (!map) { map = L.map('map-container').setView([lat, lon], zoom); L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri' }).addTo(map); } else { map.setView([lat, lon], zoom); } setTimeout(() => map.invalidateSize(), 10); hideLoading(); }; if ("geolocation" in navigator && !customerLatInput.value) { navigator.geolocation.getCurrentPosition( (position) => { setupMap(position.coords.latitude, position.coords.longitude, 18); }, (error) => { console.warn(`Geolocation error (${error.code}): ${error.message}`); showMessageModal("Could not get your location. Please select manually."); setupMap(initialLat, initialLon, initialZoom); }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 } ); } else { setupMap(initialLat, initialLon, initialZoom); } };
-        const confirmSelectedLocation = () => { const center = map.getCenter(); customerLatInput.value = center.lat.toFixed(6); customerLonInput.value = center.lng.toFixed(6); getLocationBtn.innerHTML = '<span class="material-symbols-outlined">edit_location</span> Location Set - Edit'; getLocationBtn.classList.remove('btn-secondary'); getLocationBtn.classList.add('btn-success'); locationPickerModal.style.display = 'none'; saveDraft(); };
-        async function logHistory(orderId, action, details = {}) { if (!orderId) return; try { await addDoc(collection(db, `upvc_orders/${orderId}/history`), { action, details, modifiedBy: currentUserAuth.displayName || "User", timestamp: serverTimestamp() }); } catch (error) { console.error("Error logging history:", error); } }
-        const createChangeLog = (original, newData) => { const changes = {}; const simpleFields = ['name', 'address', 'mobileNumber', 'dueDate']; simpleFields.forEach(field => { if (original[field] !== newData[field]) { changes[field.charAt(0).toUpperCase() + field.slice(1)] = `"${original[field] || ''}" → "${newData[field] || ''}"`; } }); let oldWindows = []; try {oldWindows = JSON.parse(original.windows || '[]')} catch(e){} let newWindows = []; try {newWindows = JSON.parse(newData.windows || '[]')} catch(e){} const windowChanges = {}; const maxLen = Math.max(oldWindows.length, newWindows.length); for (let i = 0; i < maxLen; i++) { const oldW = oldWindows[i]; const newW = newWindows[i]; const changeDetails = []; if (oldW && !newW) { windowChanges[`Item ${i + 1} (Deleted)`] = `(was ${oldW.width}x${oldW.height})`; } else if (!oldW && newW) { windowChanges[`Item ${i + 1} (Added)`] = `${newW.itemType}: ${newW.width}x${newW.height}, Glass: ${newW.hasGlass ? (newW.glassName || 'Yes') : 'No'}`; } else if (oldW && newW) { if (oldW.itemType !== newW.itemType) changeDetails.push(`Type: "${oldW.itemType}"→"${newW.itemType}"`); if (oldW.width !== newW.width) changeDetails.push(`W: ${oldW.width}→${newW.width}`); if (oldW.height !== newW.height) changeDetails.push(`H: ${oldW.height}→${newW.height}`); if (oldW.hasGlass !== newW.hasGlass) { changeDetails.push(`Glass: ${oldW.hasGlass ? 'On' : 'Off'}→${newW.hasGlass ? 'On' : 'Off'}`); } if (oldW.glassName !== newW.glassName) { changeDetails.push(`Glass Name: "${oldW.glassName || ''}"→"${newW.glassName || ''}"`); } if (changeDetails.length > 0) { windowChanges[`Item ${i + 1}`] = changeDetails.join(', '); } } } if (Object.keys(windowChanges).length > 0) { changes['Windows'] = windowChanges; } return changes; };
+        // --- LOCAL DRAFT LOGIC ---
+        function saveDraft() {
+            if (orderIdInput.value) return; // Don't save drafts when editing an existing order
+            
+            const draft = {
+                name: customerNameInput.value,
+                mobile: customerMobileInput.value,
+                address: customerAddressInput.value,
+                dueDate: dueDateInput.value,
+                lat: customerLatInput.value,
+                lon: customerLonInput.value,
+                
+                sameGlass: sameGlassAllCheckbox.checked,
+                globalGlassName: globalGlassNameInput.value,
+                
+                sameProfile: sameProfileAllCheckbox.checked,
+                globalProfileName: globalProfileNameInput.value,
+                
+                windows: Array.from(windowsContainer.querySelectorAll('.window-entry')).map(entry => ({
+                    itemType: entry.querySelector('.item-type-select').value,
+                    width: entry.querySelector('.window-width-input').value,
+                    height: entry.querySelector('.window-height-input').value,
+                    qty: entry.querySelector('.window-qty-input').value,
+                    hasGlass: entry.querySelector('.has-glass-checkbox').checked,
+                    glassName: entry.querySelector('.individual-glass-name').value,
+                    profileName: entry.querySelector('.individual-profile-name').value
+                }))
+            };
+            localStorage.setItem('orderDraft', JSON.stringify(draft));
+        }
+
+        function loadDraft() {
+            const draftJSON = localStorage.getItem('orderDraft');
+            if (draftJSON) {
+                const data = JSON.parse(draftJSON);
+                customerNameInput.value = data.name || '';
+                customerMobileInput.value = data.mobile || '';
+                customerAddressInput.value = data.address || '';
+                dueDateInput.value = data.dueDate || '';
+                customerLatInput.value = data.lat || '';
+                customerLonInput.value = data.lon || '';
+                
+                sameGlassAllCheckbox.checked = data.sameGlass !== undefined ? data.sameGlass : true;
+                globalGlassNameInput.value = data.globalGlassName || '';
+                globalGlassNameContainer.style.display = data.sameGlass ? 'block' : 'none';
+                
+                sameProfileAllCheckbox.checked = data.sameProfile !== undefined ? data.sameProfile : true;
+                globalProfileNameInput.value = data.globalProfileName || '';
+                globalProfileNameContainer.style.display = data.sameProfile ? 'block' : 'none';
+
+                if (data.lat && data.lon) {
+                    getLocationBtn.innerHTML = '<span class="material-symbols-outlined">edit_location</span> Location Set - Edit';
+                    getLocationBtn.classList.add('btn-success');
+                }
+                
+                windowsContainer.innerHTML = '';
+                if (data.windows && data.windows.length > 0) {
+                    data.windows.forEach((win, i) => addWindowInput(windowsContainer, i + 1, win));
+                } else {
+                    addWindowInput(windowsContainer, 1);
+                }
+                
+                // Show message correctly and wait for user to dismiss
+                messageText.textContent = "Your unsaved draft has been restored."; 
+                messageModal.style.display = 'flex';
+            }
+        }
+
+        // --- FORM SETUP ---
+        const setupFormForCreate = () => { 
+            formTitle.textContent = 'Create New Order'; 
+            saveOrderBtn.innerHTML = '<span class="material-symbols-outlined">save</span> Save Order'; 
+            orderForm.reset(); 
+            orderIdInput.value = ''; 
+            customerLatInput.value = ''; 
+            customerLonInput.value = ''; 
+            
+            getLocationBtn.innerHTML = '<span class="material-symbols-outlined">pin_drop</span> Set Customer Location on Map'; 
+            getLocationBtn.classList.remove('btn-success'); 
+            
+            windowsContainer.innerHTML = ''; 
+            addWindowInput(windowsContainer, 1); 
+            
+            // Apply defaults then attempt to load draft
+            sameGlassAllCheckbox.checked = true;
+            globalGlassNameContainer.style.display = 'block';
+            sameProfileAllCheckbox.checked = true;
+            globalProfileNameContainer.style.display = 'block';
+            
+            loadDraft(); 
+            showRealContent(); 
+        };
+
+        const setupFormForEdit = (order) => { 
+            formTitle.textContent = 'Edit Order'; 
+            saveOrderBtn.innerHTML = '<span class="material-symbols-outlined">update</span> Update Order'; 
+            orderForm.reset(); 
+            originalOrderDataInput.value = JSON.stringify(order); 
+            orderIdInput.value = order.id; 
+            customerNameInput.value = order.name; 
+            customerAddressInput.value = order.address; 
+            customerMobileInput.value = order.mobileNumber || ''; 
+            dueDateInput.value = order.dueDate || ''; 
+            customerLatInput.value = order.latitude || ''; 
+            customerLonInput.value = order.longitude || ''; 
+            
+            if (order.latitude && order.longitude) { 
+                getLocationBtn.innerHTML = '<span class="material-symbols-outlined">edit_location</span> Location Set - Edit'; 
+                getLocationBtn.classList.add('btn-success'); 
+            } 
+            
+            let windowsToLoad = []; 
+            try { windowsToLoad = JSON.parse(order.windows || '[]'); } catch(e) {} 
+            
+            // Glass Logic Check
+            const windowsWithGlass = windowsToLoad.filter(w => w.hasGlass); 
+            const firstGlassName = windowsWithGlass.length > 0 ? windowsWithGlass[0].glassName : null; 
+            const allSameGlass = windowsWithGlass.length > 0 && windowsWithGlass.every(w => w.glassName === firstGlassName); 
+            if (allSameGlass && firstGlassName) { 
+                sameGlassAllCheckbox.checked = true; 
+                globalGlassNameContainer.style.display = 'block'; 
+                globalGlassNameInput.value = firstGlassName || ''; 
+            } else { 
+                sameGlassAllCheckbox.checked = false; 
+                globalGlassNameContainer.style.display = 'none'; 
+                globalGlassNameInput.value = ''; 
+            } 
+
+            // Profile Logic Check
+            const firstProfileName = windowsToLoad.length > 0 ? windowsToLoad[0].profileName : null;
+            const allSameProfile = windowsToLoad.length > 0 && windowsToLoad.every(w => w.profileName === firstProfileName);
+            if (allSameProfile && firstProfileName) {
+                sameProfileAllCheckbox.checked = true; 
+                globalProfileNameContainer.style.display = 'block'; 
+                globalProfileNameInput.value = firstProfileName || ''; 
+            } else {
+                sameProfileAllCheckbox.checked = false; 
+                globalProfileNameContainer.style.display = 'none'; 
+                globalProfileNameInput.value = ''; 
+            }
+            
+            windowsContainer.innerHTML = ''; 
+            if (windowsToLoad.length > 0) { 
+                windowsToLoad.forEach((win, index) => addWindowInput(windowsContainer, index + 1, win)); 
+            } else { 
+                addWindowInput(windowsContainer, 1); 
+            } 
+            showRealContent(); 
+        };
+
+        // --- MAP LOGIC ---
+        const openLocationPicker = async () => { 
+            locationPickerModal.style.display = 'flex'; 
+            showLoading(); 
+            let initialLat = customerLatInput.value || 20.5937; 
+            let initialLon = customerLonInput.value || 78.9629; 
+            let initialZoom = customerLatInput.value ? 16 : 5; 
+            
+            const setupMap = (lat, lon, zoom) => { 
+                if (!map) { 
+                    map = L.map('map-container').setView([lat, lon], zoom); 
+                    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { 
+                        attribution: 'Tiles &copy; Esri' 
+                    }).addTo(map); 
+                } else { 
+                    map.setView([lat, lon], zoom); 
+                } 
+                setTimeout(() => map.invalidateSize(), 10); 
+                hideLoading(); 
+            }; 
+            
+            if ("geolocation" in navigator && !customerLatInput.value) { 
+                navigator.geolocation.getCurrentPosition( 
+                    (position) => { setupMap(position.coords.latitude, position.coords.longitude, 18); }, 
+                    (error) => { 
+                        console.warn(`Geolocation error (${error.code}): ${error.message}`); 
+                        showMessageModal("Could not get your location. Please select manually."); 
+                        setupMap(initialLat, initialLon, initialZoom); 
+                    }, 
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 } 
+                ); 
+            } else { 
+                setupMap(initialLat, initialLon, initialZoom); 
+            } 
+        };
+
+        const confirmSelectedLocation = () => { 
+            const center = map.getCenter(); 
+            customerLatInput.value = center.lat.toFixed(6); 
+            customerLonInput.value = center.lng.toFixed(6); 
+            getLocationBtn.innerHTML = '<span class="material-symbols-outlined">edit_location</span> Location Set - Edit'; 
+            getLocationBtn.classList.remove('btn-secondary'); 
+            getLocationBtn.classList.add('btn-success'); 
+            locationPickerModal.style.display = 'none'; 
+            saveDraft(); 
+        };
+
+        // --- BACKEND LOG & SUBMIT LOGIC ---
+        async function logHistory(orderId, action, details = {}) { 
+            if (!orderId) return; 
+            try { 
+                await addDoc(collection(db, `upvc_orders/${orderId}/history`), { 
+                    action, 
+                    details, 
+                    modifiedBy: currentUserAuth.displayName || "User", 
+                    timestamp: serverTimestamp() 
+                }); 
+            } catch (error) { 
+                console.error("Error logging history:", error); 
+            } 
+        }
+
+        const createChangeLog = (original, newData) => { 
+            const changes = {}; 
+            const simpleFields = ['name', 'address', 'mobileNumber', 'dueDate']; 
+            
+            simpleFields.forEach(field => { 
+                if (original[field] !== newData[field]) { 
+                    changes[field.charAt(0).toUpperCase() + field.slice(1)] = `"${original[field] || ''}" → "${newData[field] || ''}"`; 
+                } 
+            }); 
+            
+            let oldWindows = []; 
+            try {oldWindows = JSON.parse(original.windows || '[]')} catch(e){} 
+            
+            let newWindows = []; 
+            try {newWindows = JSON.parse(newData.windows || '[]')} catch(e){} 
+            
+            const windowChanges = {}; 
+            const maxLen = Math.max(oldWindows.length, newWindows.length); 
+            
+            for (let i = 0; i < maxLen; i++) { 
+                const oldW = oldWindows[i]; 
+                const newW = newWindows[i]; 
+                const changeDetails = []; 
+                
+                if (oldW && !newW) { 
+                    windowChanges[`Item ${i + 1} (Deleted)`] = `(was ${oldW.width}x${oldW.height})`; 
+                } else if (!oldW && newW) { 
+                    windowChanges[`Item ${i + 1} (Added)`] = `${newW.itemType} (Qty: ${newW.qty}): ${newW.width}x${newW.height}, Glass: ${newW.hasGlass ? (newW.glassName || 'Yes') : 'No'}, Profile: ${newW.profileName}`; 
+                } else if (oldW && newW) { 
+                    if (oldW.itemType !== newW.itemType) changeDetails.push(`Type: "${oldW.itemType}"→"${newW.itemType}"`); 
+                    if (oldW.width !== newW.width) changeDetails.push(`W: ${oldW.width}→${newW.width}`); 
+                    if (oldW.height !== newW.height) changeDetails.push(`H: ${oldW.height}→${newW.height}`); 
+                    if (oldW.qty !== newW.qty) changeDetails.push(`Qty: ${oldW.qty}→${newW.qty}`);
+                    
+                    if (oldW.hasGlass !== newW.hasGlass) { 
+                        changeDetails.push(`Glass: ${oldW.hasGlass ? 'On' : 'Off'}→${newW.hasGlass ? 'On' : 'Off'}`); 
+                    } 
+                    if (oldW.glassName !== newW.glassName) { 
+                        changeDetails.push(`Glass Name: "${oldW.glassName || ''}"→"${newW.glassName || ''}"`); 
+                    } 
+                    if (oldW.profileName !== newW.profileName) {
+                        changeDetails.push(`Profile Name: "${oldW.profileName || ''}"→"${newW.profileName || ''}"`); 
+                    }
+                    if (changeDetails.length > 0) { 
+                        windowChanges[`Item ${i + 1}`] = changeDetails.join(', '); 
+                    } 
+                } 
+            } 
+            if (Object.keys(windowChanges).length > 0) { 
+                changes['Windows'] = windowChanges; 
+            } 
+            return changes; 
+        };
+
+        async function handleFormSubmit(e) {
+            e.preventDefault(); 
+            showLoading();
+            
+            const orderId = orderIdInput.value;
+            const isUpdating = !!orderId;
+            const isSameGlass = sameGlassAllCheckbox.checked;
+            const isSameProfile = sameProfileAllCheckbox.checked;
+            
+            const globalGlass = globalGlassNameInput.value.trim();
+            const globalProfile = globalProfileNameInput.value.trim();
+            
+            const windowsData = Array.from(windowsContainer.querySelectorAll('.window-entry')).map(entry => {
+                const hasGlass = entry.querySelector('.has-glass-checkbox').checked;
+                
+                let glassName = '';
+                if (hasGlass) { 
+                    glassName = isSameGlass ? globalGlass : entry.querySelector('.individual-glass-name').value.trim(); 
+                }
+                
+                let profileName = isSameProfile ? globalProfile : entry.querySelector('.individual-profile-name').value.trim();
+                
+                return { 
+                    itemType: entry.querySelector('.item-type-select').value, 
+                    width: parseFloat(entry.querySelector('.window-width-input').value), 
+                    height: parseFloat(entry.querySelector('.window-height-input').value),
+                    qty: parseInt(entry.querySelector('.window-qty-input').value, 10),
+                    hasGlass, 
+                    glassName,
+                    profileName
+                };
+            });
+            
+            const orderData = { 
+                name: customerNameInput.value.trim(), 
+                address: customerAddressInput.value.trim(), 
+                mobileNumber: customerMobileInput.value.trim(), 
+                dueDate: dueDateInput.value, 
+                windows: JSON.stringify(windowsData), 
+                latitude: customerLatInput.value, 
+                longitude: customerLonInput.value 
+            };
+            
+            let finalOrderId = orderId;
+            
+            try {
+                const collectionRef = collection(db, `upvc_orders`);
+                if(isUpdating) {
+                    const originalOrder = JSON.parse(originalOrderDataInput.value);
+                    const changes = createChangeLog(originalOrder, orderData);
+                    await updateDoc(doc(collectionRef, orderId), { ...orderData, updatedAt: serverTimestamp() });
+                    if(Object.keys(changes).length > 0) { await logHistory(orderId, 'Order Edited', changes); }
+                    hideLoading();
+                    showMessageModal("Order updated successfully!", `order-details.html?id=${finalOrderId}`);
+                } else {
+                    const newDocRef = await addDoc(collectionRef, { ...orderData, status: 'pending', createdBy: currentUserAuth.displayName || "User", createdAt: serverTimestamp() });
+                    finalOrderId = newDocRef.id;
+                    await logHistory(finalOrderId, 'Order Created');
+                    localStorage.removeItem('orderDraft');
+                    hideLoading();
+                    showMessageModal("Order created successfully!", `order-details.html?id=${finalOrderId}`);
+                }
+            } catch (error) { 
+                console.error("Error saving order:", error); 
+                hideLoading(); 
+                showMessageModal("Failed to save order."); 
+            }
+        }
         
         // --- NAVBAR FUNCTIONS ---
-        function populateNavbar(user, userProfile) { const defaultPhoto = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23e5e7eb"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>'; document.getElementById('desktop-profile-pic').src = user.photoURL || defaultPhoto; document.getElementById('desktop-profile-name').textContent = user.displayName || 'User'; document.getElementById('desktop-profile-email').textContent = user.email || ''; document.getElementById('mobile-profile-pic').src = user.photoURL || defaultPhoto; document.getElementById('mobile-profile-name').textContent = user.displayName || 'User'; document.getElementById('mobile-profile-email').textContent = user.email || ''; const isAdmin = userProfile.role === 'admin'; const homeLink = isAdmin ? 'admin-dashboard.html' : 'employee-dashboard.html'; const secondaryLink = isAdmin ? { href: 'admin-employees.html', text: 'Manage Employees' } : { href: 'my-attendance.html', text: 'My Attendance' }; document.getElementById('dashboard-link').href = homeLink; document.getElementById('nav-link-home').href = homeLink; const navLinkSecondary = document.getElementById('nav-link-secondary'); navLinkSecondary.href = secondaryLink.href; navLinkSecondary.textContent = secondaryLink.text; navLinkSecondary.style.display = 'flex'; const mobileLinksContainer = document.getElementById('mobile-menu-links'); mobileLinksContainer.innerHTML = `<a href="${homeLink}" class="mobile-nav-link"><svg class="mobile-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg><span>Home</span></a><a href="view-orders.html" class="mobile-nav-link"><svg class="mobile-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg><span>All Orders</span></a><a href="${secondaryLink.href}" class="mobile-nav-link"><svg class="mobile-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${isAdmin ? 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' : 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'}" /></svg><span>${secondaryLink.text}</span></a>`; }
-        function initializeNavbar() { const mobileMenu = document.getElementById('mobileMenu'); const mobileMenuButton = document.getElementById('mobileMenuButton'); const mobileMenuClose = document.getElementById('mobileMenuClose'); const menuOverlay = document.getElementById('menuOverlay'); const desktopProfileTrigger = document.getElementById('desktopProfileTrigger'); const logoutPopup = document.getElementById('logoutPopup'); function closeMobileMenu() { if (mobileMenu.classList.contains('active')) { mobileMenu.classList.remove('active'); menuOverlay.classList.remove('active'); document.body.style.overflow = ''; } } mobileMenuButton.addEventListener('click', () => { mobileMenu.classList.add('active'); menuOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; }); mobileMenuClose.addEventListener('click', closeMobileMenu); menuOverlay.addEventListener('click', closeMobileMenu); if (desktopProfileTrigger && logoutPopup) { desktopProfileTrigger.addEventListener('click', (event) => { event.stopPropagation(); const isExpanded = desktopProfileTrigger.getAttribute('aria-expanded') === 'true'; logoutPopup.classList.toggle('show'); desktopProfileTrigger.setAttribute('aria-expanded', !isExpanded); }); window.addEventListener('click', (event) => { if (!desktopProfileTrigger.contains(event.target) && !logoutPopup.contains(event.target)) { if (logoutPopup.classList.contains('show')) { logoutPopup.classList.remove('show'); desktopProfileTrigger.setAttribute('aria-expanded', 'false'); } } }); } document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeMobileMenu(); if (logoutPopup && logoutPopup.classList.contains('show')) { logoutPopup.classList.remove('show'); desktopProfileTrigger.setAttribute('aria-expanded', 'false'); } } }); window.addEventListener('resize', () => { if (window.innerWidth > 768) closeMobileMenu(); }); }
-        
-        // --- FIREBASE & MAIN LOGIC ---
+        function populateNavbar(user, userProfile) { 
+            const defaultPhoto = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23e5e7eb"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>'; 
+            document.getElementById('desktop-profile-pic').src = user.photoURL || defaultPhoto; 
+            document.getElementById('desktop-profile-name').textContent = user.displayName || 'User'; 
+            document.getElementById('desktop-profile-email').textContent = user.email || ''; 
+            document.getElementById('mobile-profile-pic').src = user.photoURL || defaultPhoto; 
+            document.getElementById('mobile-profile-name').textContent = user.displayName || 'User'; 
+            document.getElementById('mobile-profile-email').textContent = user.email || ''; 
+            
+            const isAdmin = userProfile.role === 'admin'; 
+            const homeLink = isAdmin ? 'admin-dashboard.html' : 'employee-dashboard.html'; 
+            const secondaryLink = isAdmin ? { href: 'admin-employees.html', text: 'Manage Employees' } : { href: 'my-attendance.html', text: 'My Attendance' }; 
+            
+            document.getElementById('dashboard-link').href = homeLink; 
+            document.getElementById('nav-link-home').href = homeLink; 
+            
+            const navLinkSecondary = document.getElementById('nav-link-secondary'); 
+            navLinkSecondary.href = secondaryLink.href; 
+            navLinkSecondary.textContent = secondaryLink.text; 
+            navLinkSecondary.style.display = 'flex'; 
+            
+            const mobileLinksContainer = document.getElementById('mobile-menu-links'); 
+            mobileLinksContainer.innerHTML = `<a href="${homeLink}" class="mobile-nav-link"><svg class="mobile-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg><span>Home</span></a><a href="view-orders.html" class="mobile-nav-link"><svg class="mobile-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg><span>All Orders</span></a><a href="${secondaryLink.href}" class="mobile-nav-link"><svg class="mobile-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${isAdmin ? 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' : 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'}" /></svg><span>${secondaryLink.text}</span></a>`; 
+        }
+
+        function initializeNavbar() { 
+            const mobileMenu = document.getElementById('mobileMenu'); 
+            const mobileMenuButton = document.getElementById('mobileMenuButton'); 
+            const mobileMenuClose = document.getElementById('mobileMenuClose'); 
+            const menuOverlay = document.getElementById('menuOverlay'); 
+            const desktopProfileTrigger = document.getElementById('desktopProfileTrigger'); 
+            const logoutPopup = document.getElementById('logoutPopup'); 
+            
+            function closeMobileMenu() { 
+                if (mobileMenu.classList.contains('active')) { 
+                    mobileMenu.classList.remove('active'); 
+                    menuOverlay.classList.remove('active'); 
+                    document.body.style.overflow = ''; 
+                } 
+            } 
+            mobileMenuButton.addEventListener('click', () => { 
+                mobileMenu.classList.add('active'); 
+                menuOverlay.classList.add('active'); 
+                document.body.style.overflow = 'hidden'; 
+            }); 
+            mobileMenuClose.addEventListener('click', closeMobileMenu); 
+            menuOverlay.addEventListener('click', closeMobileMenu); 
+            
+            if (desktopProfileTrigger && logoutPopup) { 
+                desktopProfileTrigger.addEventListener('click', (event) => { 
+                    event.stopPropagation(); 
+                    const isExpanded = desktopProfileTrigger.getAttribute('aria-expanded') === 'true'; 
+                    logoutPopup.classList.toggle('show'); 
+                    desktopProfileTrigger.setAttribute('aria-expanded', !isExpanded); 
+                }); 
+                window.addEventListener('click', (event) => { 
+                    if (!desktopProfileTrigger.contains(event.target) && !logoutPopup.contains(event.target)) { 
+                        if (logoutPopup.classList.contains('show')) { 
+                            logoutPopup.classList.remove('show'); 
+                            desktopProfileTrigger.setAttribute('aria-expanded', 'false'); 
+                        } 
+                    } 
+                }); 
+            } 
+            document.addEventListener('keydown', (e) => { 
+                if (e.key === 'Escape') { 
+                    closeMobileMenu(); 
+                    if (logoutPopup && logoutPopup.classList.contains('show')) { 
+                        logoutPopup.classList.remove('show'); 
+                        desktopProfileTrigger.setAttribute('aria-expanded', 'false'); 
+                    } 
+                } 
+            }); 
+            window.addEventListener('resize', () => { 
+                if (window.innerWidth > 768) closeMobileMenu(); 
+            }); 
+        }
+
+        // --- FIREBASE INITIALIZATION LOGIC ---
         async function initializeAppLogic() {
-            const firebaseConfig = { apiKey: "__API_KEY__", authDomain: "__AUTH_DOMAIN__", projectId: "__PROJECT_ID__", storageBucket: "__STORAGE_BUCKET__", messagingSenderId: "__MESSAGING_SENDER_ID__", appId: "__APP_ID__" };
+            const firebaseConfig = { 
+                apiKey: "__API_KEY__", 
+                authDomain: "__AUTH_DOMAIN__", 
+                projectId: "__PROJECT_ID__", 
+                storageBucket: "__STORAGE_BUCKET__", 
+                messagingSenderId: "__MESSAGING_SENDER_ID__", 
+                appId: "__APP_ID__" 
+            };
             const app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             auth = getAuth(app);
@@ -341,57 +898,40 @@
                 if (user) {
                     currentUserAuth = user;
                     const userDoc = await getDoc(doc(db, "users", user.uid));
-                    if (!userDoc.exists() || userDoc.data().status !== 'approved') { window.location.href = 'login.html'; return; }
+                    if (!userDoc.exists() || userDoc.data().status !== 'approved') { 
+                        window.location.href = 'login.html'; 
+                        return; 
+                    }
                     const userProfile = userDoc.data();
                     
                     populateNavbar(user, userProfile);
                     
                     const urlParams = new URLSearchParams(window.location.search);
                     const orderId = urlParams.get('id');
-                    if (orderId) { await loadOrderForEditing(orderId); } 
-                    else { setupFormForCreate(); }
-                } else { window.location.href = 'login.html'; }
+                    if (orderId) { 
+                        await loadOrderForEditing(orderId); 
+                    } else { 
+                        setupFormForCreate(); 
+                    }
+                } else { 
+                    window.location.href = 'login.html'; 
+                }
             });
         }
 
         async function loadOrderForEditing(orderId) {
             try {
                 const orderSnap = await getDoc(doc(db, 'upvc_orders', orderId));
-                if (orderSnap.exists()) { setupFormForEdit({ id: orderSnap.id, ...orderSnap.data() }); } 
-                else { showMessageModal("Order not found. Redirecting...", "view-orders.html"); }
-            } catch (error) { console.error("Error loading order:", error); showMessageModal("Error loading order data."); showRealContent(); }
-        }
-
-        async function handleFormSubmit(e) {
-            e.preventDefault(); showLoading();
-            const orderId = orderIdInput.value;
-            const isUpdating = !!orderId;
-            const isSameGlass = sameGlassAllCheckbox.checked;
-            const globalGlass = globalGlassNameInput.value.trim();
-            const windowsData = Array.from(windowsContainer.querySelectorAll('.window-entry')).map(entry => {
-                const hasGlass = entry.querySelector('.has-glass-checkbox').checked;
-                let glassName = '';
-                if (hasGlass) { glassName = isSameGlass ? globalGlass : entry.querySelector('.individual-glass-name').value.trim(); }
-                return { itemType: entry.querySelector('.item-type-select').value, width: entry.querySelector('.window-width-input').value, height: entry.querySelector('.window-height-input').value, hasGlass, glassName };
-            });
-            const orderData = { name: customerNameInput.value.trim(), address: customerAddressInput.value.trim(), mobileNumber: customerMobileInput.value.trim(), dueDate: dueDateInput.value, windows: JSON.stringify(windowsData), latitude: customerLatInput.value, longitude: customerLonInput.value };
-            let finalOrderId = orderId;
-            try {
-                const collectionRef = collection(db, `upvc_orders`);
-                if(isUpdating) {
-                    const originalOrder = JSON.parse(originalOrderDataInput.value);
-                    const changes = createChangeLog(originalOrder, orderData);
-                    await updateDoc(doc(collectionRef, orderId), { ...orderData, updatedAt: serverTimestamp() });
-                    if(Object.keys(changes).length > 0) { await logHistory(orderId, 'Order Edited', changes); }
-                    showMessageModal("Order updated successfully!", `order-details.html?id=${finalOrderId}`);
-                } else {
-                    const newDocRef = await addDoc(collectionRef, { ...orderData, status: 'pending', createdBy: currentUserAuth.displayName || "User", createdAt: serverTimestamp() });
-                    finalOrderId = newDocRef.id;
-                    await logHistory(finalOrderId, 'Order Created');
-                    localStorage.removeItem('orderDraft');
-                    showMessageModal("Order created successfully!", `order-details.html?id=${finalOrderId}`);
+                if (orderSnap.exists()) { 
+                    setupFormForEdit({ id: orderSnap.id, ...orderSnap.data() }); 
+                } else { 
+                    showMessageModal("Order not found. Redirecting...", "view-orders.html"); 
                 }
-            } catch (error) { console.error("Error saving order:", error); showMessageModal("Failed to save order."); hideLoading(); }
+            } catch (error) { 
+                console.error("Error loading order:", error); 
+                showMessageModal("Error loading order data."); 
+                showRealContent(); 
+            }
         }
         
         // --- EVENT BINDING ---
@@ -408,14 +948,36 @@
                 }
             });
             orderForm.addEventListener('submit', handleFormSubmit);
-            addWindowBtn.addEventListener('click', () => addWindowInput(windowsContainer, windowsContainer.children.length + 1));
-            messageOkBtn.addEventListener('click', () => messageModal.style.display = 'none');
+            addWindowBtn.addEventListener('click', () => {
+                addWindowInput(windowsContainer, windowsContainer.children.length + 1);
+                saveDraft();
+            });
+            messageOkBtn.addEventListener('click', () => {
+                messageModal.style.display = 'none';
+            });
             getLocationBtn.addEventListener('click', openLocationPicker);
             confirmLocationBtn.addEventListener('click', confirmSelectedLocation);
             locationPickerCloseBtn.addEventListener('click', () => locationPickerModal.style.display = 'none');
             cancelLocationBtn.addEventListener('click', () => locationPickerModal.style.display = 'none');
-            sameGlassAllCheckbox.addEventListener('change', () => { globalGlassNameContainer.style.display = sameGlassAllCheckbox.checked ? 'block' : 'none'; updateAllWindowGlassUIs(); saveDraft(); });
-            customerNameInput.addEventListener('input', saveDraft); customerMobileInput.addEventListener('input', saveDraft); customerAddressInput.addEventListener('input', saveDraft); dueDateInput.addEventListener('change', saveDraft); globalGlassNameInput.addEventListener('input', saveDraft);
+            
+            sameGlassAllCheckbox.addEventListener('change', () => { 
+                globalGlassNameContainer.style.display = sameGlassAllCheckbox.checked ? 'block' : 'none'; 
+                updateAllWindowGlassUIs(); 
+                saveDraft(); 
+            });
+            
+            sameProfileAllCheckbox.addEventListener('change', () => { 
+                globalProfileNameContainer.style.display = sameProfileAllCheckbox.checked ? 'block' : 'none'; 
+                updateAllWindowProfileUIs(); 
+                saveDraft(); 
+            });
+            
+            customerNameInput.addEventListener('input', saveDraft); 
+            customerMobileInput.addEventListener('input', saveDraft); 
+            customerAddressInput.addEventListener('input', saveDraft); 
+            dueDateInput.addEventListener('change', saveDraft); 
+            globalGlassNameInput.addEventListener('input', saveDraft);
+            globalProfileNameInput.addEventListener('input', saveDraft);
         }
 
         // --- APP INITIALIZATION ---
