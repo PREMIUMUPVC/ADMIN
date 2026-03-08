@@ -453,9 +453,10 @@
                                             <a href="#" class="action-link-item detail-get-directions-btn"><span class="icon material-symbols-outlined">directions</span><span class="label">Get Directions</span><span class="chevron material-symbols-outlined">chevron_right</span></a>
                                             <a href="#" class="action-link-item detail-view-quote-btn"><span class="icon material-symbols-outlined">request_quote</span><span class="label">View Quote</span><span class="chevron material-symbols-outlined">chevron_right</span></a>
                                             <a href="#" class="action-link-item detail-view-bill-btn"><span class="icon material-symbols-outlined">receipt_long</span><span class="label">View Bill</span><span class="chevron material-symbols-outlined">chevron_right</span></a>
+                                            <a href="#" class="action-link-item detail-view-job-sheet-btn"><span class="icon material-symbols-outlined">assignment</span><span class="label">View Job Sheet</span><span class="chevron material-symbols-outlined">chevron_right</span></a>
                                         </div>
                                     </section>
-                                    <section class="content-section"><h3>Windows (<span class="detail-window-count"></span>)</h3><div class="detail-windows-list"></div></section>
+                                    <section class="content-section"><h3>Items (<span class="detail-window-count"></span>)</h3><div class="detail-windows-list"></div></section>
                                 </div>
                                 <div id="tab-payments" class="tabs__content-pane"><section class="content-section" data-section="payment-management"><h3>Financial Log</h3><ul class="financial-log"></ul></section></div>
                                 <div id="tab-history" class="tabs__content-pane"><section class="content-section" data-section="history"><h3>Order History</h3><ul class="history-list"></ul></section></div>
@@ -475,9 +476,10 @@
                                    <a href="#" class="action-link-item detail-get-directions-btn"><span class="icon material-symbols-outlined">directions</span><span class="label">Get Directions</span><span class="chevron material-symbols-outlined">chevron_right</span></a>
                                    <a href="#" class="action-link-item detail-view-quote-btn"><span class="icon material-symbols-outlined">request_quote</span><span class="label">View Quote</span><span class="chevron material-symbols-outlined">chevron_right</span></a>
                                    <a href="#" class="action-link-item detail-view-bill-btn"><span class="icon material-symbols-outlined">receipt_long</span><span class="label">View Bill</span><span class="chevron material-symbols-outlined">chevron_right</span></a>
+                                   <a href="#" class="action-link-item detail-view-job-sheet-btn"><span class="icon material-symbols-outlined">assignment</span><span class="label">View Job Sheet</span><span class="chevron material-symbols-outlined">chevron_right</span></a>
                                 </div>
                             </section>
-                            <section class="content-section"><h3>Windows (<span class="detail-window-count"></span>)</h3><div class="detail-windows-list"></div></section>
+                            <section class="content-section"><h3>Items (<span class="detail-window-count"></span>)</h3><div class="detail-windows-list"></div></section>
                         </div>
                     </div>
                     <div class="grid-sidebar desktop-view">
@@ -572,7 +574,13 @@
             });
             let windowsToDisplay = [];
             try { windowsToDisplay = JSON.parse(order.windows || '[]'); } catch(e) {}
-            const windowsHtml = windowsToDisplay.length > 0 ? windowsToDisplay.map((win, i) => { const glassInfo = win.hasGlass ? `<small>Glass: ${win.glassName || 'Not specified'}</small>` : '<small>No Glass</small>'; const itemName = win.itemType ? (win.itemType.charAt(0).toUpperCase() + win.itemType.slice(1)) : 'Window'; return `<div class="detail-window-item"><div class="item-number">${i + 1}</div><div class="item-info"><strong>${itemName}:</strong> H: ${win.height} mm, W: ${win.width} mm ${glassInfo}</div></div>`; }).join('') : '<p>No window details available.</p>';
+            const windowsHtml = windowsToDisplay.length > 0 ? windowsToDisplay.map((win, i) => { 
+                const qty = win.qty || 1;
+                const glassInfo = win.hasGlass ? `<small>Glass: ${win.glassName || 'Not specified'}</small>` : '<small>No Glass</small>'; 
+                const profileInfo = win.profileName ? `<small>Profile: ${win.profileName}</small>` : '';
+                const itemName = win.itemType ? (win.itemType.charAt(0).toUpperCase() + win.itemType.slice(1)) : 'Window'; 
+                return `<div class="detail-window-item"><div class="item-number">${i + 1}</div><div class="item-info"><strong>${itemName} (Qty: ${qty}):</strong> H: ${win.height} mm, W: ${win.width} mm ${glassInfo} ${profileInfo}</div></div>`; 
+            }).join('') : '<p>No window details available.</p>';
             document.querySelectorAll('.detail-windows-list').forEach(list => list.innerHTML = windowsHtml);
             document.querySelectorAll('.detail-window-count').forEach(el => el.textContent = windowsToDisplay.length);
             document.querySelectorAll('.detail-get-directions-btn').forEach(btn => btn.style.display = (order.latitude && order.longitude) ? 'flex' : 'none');
@@ -747,6 +755,8 @@
             if (quoteBtn) { e.preventDefault(); window.location.href = `quote.html?id=${currentOrderId}`; }
             const billBtn = e.target.closest('.detail-view-bill-btn');
             if (billBtn) { e.preventDefault(); window.location.href = `bill.html?id=${currentOrderId}`; }
+            const jobSheetBtn = e.target.closest('.detail-view-job-sheet-btn');
+            if (jobSheetBtn) { e.preventDefault(); window.location.href = `job-sheet.html?id=${currentOrderId}`; }
         });
         
         // --- INITIALIZE APP ---
